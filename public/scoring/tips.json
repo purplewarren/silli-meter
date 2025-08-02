@@ -1,0 +1,22 @@
+{
+  "quiet": [
+    "Quiet minute + 4-7-8 breathing; speak softer than a whisper.",
+    "Dim lights to warm (~1800K); hide bright screens.",
+    "Lullaby pacing ~60–70 BPM; mirror child, then fade."
+  ],
+  "speech": [
+    "Lower your voice gradually; use gentle whispers.",
+    "Create a calm environment; reduce background noise.",
+    "Use soothing tones; avoid sudden volume changes."
+  ],
+  "tv_music": [
+    "Turn down media volume; use subtitles if needed.",
+    "Switch to calming sounds; avoid stimulating content.",
+    "Create a quiet zone; minimize electronic distractions."
+  ],
+  "white_noise": [
+    "White noise is good for sleep; keep it consistent.",
+    "Use gentle, steady sounds; avoid sudden changes.",
+    "Maintain a peaceful environment; reduce interruptions."
+  ]
+} 
