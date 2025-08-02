@@ -300,7 +300,7 @@ class SilliApp {
       const botToken = this.getBotToken();
       const chatId = this.getChatId();
       
-      console.log('Sending to bot with token:', botToken.substring(0, 10) + '...');
+      console.log('Sending to bot with token:', '[REDACTED]');
       console.log('Chat ID:', chatId);
       
       // Note: Session data is available in sessionJson and pngBlob
@@ -366,17 +366,17 @@ class SilliApp {
     const urlParams = new URLSearchParams(window.location.search);
     const botToken = urlParams.get('bot_token');
     console.log('URL parameters:', window.location.search);
-    console.log('Bot token from URL:', botToken);
+    console.log('Bot token from URL:', botToken ? '[REDACTED]' : 'NOT_FOUND');
     
     if (!botToken) {
       console.error('No bot_token found in URL parameters');
-      console.log('Available URL parameters:', Array.from(urlParams.entries()));
+      console.log('Available URL parameters:', Array.from(urlParams.entries()).map(([k, v]) => [k, k === 'bot_token' ? '[REDACTED]' : v]));
       throw new Error('Bot token not provided');
     }
     
     // Decode the bot token in case it was URL encoded
     const decodedToken = decodeURIComponent(botToken);
-    console.log('Decoded bot token:', decodedToken);
+    console.log('Decoded bot token:', '[REDACTED]');
     
     return decodedToken;
   }
