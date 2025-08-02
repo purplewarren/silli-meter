@@ -45,4 +45,4 @@ All audio analysis runs locally on your device. No audio data is uploaded or tra
 - **Audio Processing**: AudioWorklet for real-time frame processing
 - **Feature Extraction**: RMS, spectral centroid, rolloff, flux, VAD
 - **Scoring**: Calibrated weights from bot analysis
-- **Export**: Session JSON contract + PNG timeline cards 
+- **Export**: Session JSON contract + PNG timeline cards # Trigger deployment
