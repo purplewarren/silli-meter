@@ -51,3 +51,4 @@ All audio analysis runs locally on your device. No audio data is uploaded or tra
 # Manual deployment approach
 # Simple build workflow
 # Trigger deployment with assets
+# New deployment workflow
