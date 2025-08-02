@@ -47,3 +47,4 @@ All audio analysis runs locally on your device. No audio data is uploaded or tra
 - **Scoring**: Calibrated weights from bot analysis
 - **Export**: Session JSON contract + PNG timeline cards # Trigger deployment
 # Updated workflow
+# Simplified workflow
