@@ -13,6 +13,7 @@ interface AppConfig {
   mode: 'helper' | 'low_power';
   family: string;
   session: string;
+  token: string | null;
 }
 
 class SilliApp {
@@ -47,7 +48,8 @@ class SilliApp {
     return {
       mode: (urlParams.get('mode') as 'helper' | 'low_power') || 'helper',
       family: urlParams.get('family') || 'fam_unknown',
-      session: urlParams.get('session') || `fam_unknown_${Date.now()}`
+      session: urlParams.get('session') || `fam_unknown_${Date.now()}`,
+      token: urlParams.get('token') || null
     };
   }
 
@@ -296,62 +298,55 @@ class SilliApp {
       exportBtn.textContent = 'Sending to Bot...';
       exportBtn.disabled = true;
       
-      // Get bot token and chat ID
-      const botToken = this.getBotToken();
-      const chatId = this.getChatId();
+      // Note: We can't directly send to bot from PWA due to CORS restrictions
+      // Instead, we'll provide the session data for manual ingestion
       
-      console.log('Sending to bot with token:', '[REDACTED]');
-      console.log('Chat ID:', chatId);
-      
-      // Note: Session data is available in sessionJson and pngBlob
-      // but we're sending a simple text message for now
-      
-      const messageText = `📊 **PWA Session Complete!**\n\n📊 Score: ${this.currentScore}/100\n⏱️ Duration: ${this.formatDuration(Date.now() - this.startTime)}\n🏷️ Badges: ${this.currentBadges.join(', ') || 'None detected'}\n📅 Session: ${this.config.session}\n\nSession data has been sent to the bot.`;
-      
-      console.log('Sending message:', messageText);
-      
-      // Send to bot via Telegram Bot API
-      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: messageText,
-          parse_mode: 'Markdown'
-        })
+      console.log('Session completed:', {
+        score: this.currentScore,
+        duration: this.formatDuration(Date.now() - this.startTime),
+        badges: this.currentBadges,
+        session: this.config.session,
+        token: this.config.token ? '[REDACTED]' : 'none'
       });
       
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
+      // Since we can't directly send to bot from PWA, we'll download the data
+      // and provide instructions for manual ingestion
+      this.downloadFile(sessionJson, 'session.json', 'application/json');
+      this.downloadFile(pngBlob, 'session-card.png', 'image/png');
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Telegram API error:', errorText);
-        throw new Error(`Telegram API error: ${response.status} - ${errorText}`);
-      }
+      // Show success message
+      exportBtn.textContent = '✅ Data Ready';
+      setTimeout(() => {
+        exportBtn.textContent = 'Export Results';
+        exportBtn.disabled = false;
+      }, 3000);
       
-      if (response.ok) {
-        // Show success message
-        exportBtn.textContent = '✅ Sent to Bot';
-        setTimeout(() => {
-          exportBtn.textContent = 'Export Results';
-          exportBtn.disabled = false;
-        }, 3000);
-      } else {
-        throw new Error('Failed to send to bot');
-      }
+      // Display instructions
+      const instructions = document.createElement('div');
+      instructions.innerHTML = `
+        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <h4>📤 Session Data Ready</h4>
+          <p>Your session data has been downloaded. To send it to the bot:</p>
+          <ol>
+            <li>Go back to Telegram</li>
+            <li>Send the <code>session.json</code> file to the bot</li>
+            <li>The bot will automatically process your session</li>
+          </ol>
+          <p><strong>Session ID:</strong> ${this.config.session}</p>
+          ${this.config.token ? `<p><strong>Token:</strong> ${this.config.token}</p>` : ''}
+        </div>
+      `;
+      document.querySelector('.container')?.appendChild(instructions);
       
     } catch (error) {
-      console.error('Failed to send to bot:', error);
+      console.error('Failed to process session:', error);
       
-      // Fallback to download if bot communication fails
+      // Fallback to download if processing fails
       this.downloadFile(sessionJson, 'session.json', 'application/json');
       this.downloadFile(pngBlob, 'session-card.png', 'image/png');
       
       const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-      exportBtn.textContent = 'Downloaded (Bot unavailable)';
+      exportBtn.textContent = 'Downloaded (Error occurred)';
       setTimeout(() => {
         exportBtn.textContent = 'Export Results';
         exportBtn.disabled = false;
@@ -361,32 +356,7 @@ class SilliApp {
 
 
 
-  private getBotToken(): string {
-    // Extract bot token from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const botToken = urlParams.get('bot_token');
-    console.log('URL parameters:', window.location.search);
-    console.log('Bot token from URL:', botToken ? '[REDACTED]' : 'NOT_FOUND');
-    
-    if (!botToken) {
-      console.error('No bot_token found in URL parameters');
-      console.log('Available URL parameters:', Array.from(urlParams.entries()).map(([k, v]) => [k, k === 'bot_token' ? '[REDACTED]' : v]));
-      throw new Error('Bot token not provided');
-    }
-    
-    // Decode the bot token in case it was URL encoded
-    const decodedToken = decodeURIComponent(botToken);
-    console.log('Decoded bot token:', '[REDACTED]');
-    
-    return decodedToken;
-  }
 
-  private getChatId(): string {
-    // Extract chat ID from family ID
-    const familyId = this.config.family;
-    const chatId = familyId.replace('fam_', '');
-    return chatId;
-  }
 
   private formatDuration(duration: number): string {
     const minutes = Math.floor(duration / 60000);
