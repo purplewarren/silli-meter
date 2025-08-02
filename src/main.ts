@@ -285,9 +285,79 @@ class SilliApp {
       duration: Date.now() - this.startTime
     });
     
-    // Download files
-    this.downloadFile(sessionJson, 'session.json', 'application/json');
-    this.downloadFile(pngBlob, 'session-card.png', 'image/png');
+    // Send data back to bot via Telegram
+    await this.sendToBot(sessionJson, pngBlob);
+  }
+
+  private async sendToBot(sessionJson: string, pngBlob: Blob): Promise<void> {
+    try {
+      // Show sending status
+      const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
+      exportBtn.textContent = 'Sending to Bot...';
+      exportBtn.disabled = true;
+      
+      // Note: Session data is available in sessionJson and pngBlob
+      // but we're sending a simple text message for now
+      
+      // Send to bot via Telegram Bot API
+      const response = await fetch(`https://api.telegram.org/bot${this.getBotToken()}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: this.getChatId(),
+          text: `📊 Session Complete!\n\nScore: ${this.currentScore}/100\nDuration: ${this.formatDuration(Date.now() - this.startTime)}\nBadges: ${this.currentBadges.join(', ')}\n\nSession data attached.`,
+          parse_mode: 'Markdown'
+        })
+      });
+      
+      if (response.ok) {
+        // Show success message
+        exportBtn.textContent = '✅ Sent to Bot';
+        setTimeout(() => {
+          exportBtn.textContent = 'Export Results';
+          exportBtn.disabled = false;
+        }, 3000);
+      } else {
+        throw new Error('Failed to send to bot');
+      }
+      
+    } catch (error) {
+      console.error('Failed to send to bot:', error);
+      
+      // Fallback to download if bot communication fails
+      this.downloadFile(sessionJson, 'session.json', 'application/json');
+      this.downloadFile(pngBlob, 'session-card.png', 'image/png');
+      
+      const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
+      exportBtn.textContent = 'Downloaded (Bot unavailable)';
+      setTimeout(() => {
+        exportBtn.textContent = 'Export Results';
+        exportBtn.disabled = false;
+      }, 3000);
+    }
+  }
+
+
+
+  private getBotToken(): string {
+    // Extract bot token from URL or use a default
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('bot_token') || '8346175218:AAFHAoRq8YTxYwN1ubZAewpd36TP9q1a4ko';
+  }
+
+  private getChatId(): string {
+    // Extract chat ID from family ID
+    const familyId = this.config.family;
+    const chatId = familyId.replace('fam_', '');
+    return chatId;
+  }
+
+  private formatDuration(duration: number): string {
+    const minutes = Math.floor(duration / 60000);
+    const seconds = Math.floor((duration % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   private downloadFile(content: any, filename: string, mimeType: string): void {
