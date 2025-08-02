@@ -296,21 +296,41 @@ class SilliApp {
       exportBtn.textContent = 'Sending to Bot...';
       exportBtn.disabled = true;
       
+      // Get bot token and chat ID
+      const botToken = this.getBotToken();
+      const chatId = this.getChatId();
+      
+      console.log('Sending to bot with token:', botToken.substring(0, 10) + '...');
+      console.log('Chat ID:', chatId);
+      
       // Note: Session data is available in sessionJson and pngBlob
       // but we're sending a simple text message for now
       
+      const messageText = `📊 **PWA Session Complete!**\n\n📊 Score: ${this.currentScore}/100\n⏱️ Duration: ${this.formatDuration(Date.now() - this.startTime)}\n🏷️ Badges: ${this.currentBadges.join(', ') || 'None detected'}\n📅 Session: ${this.config.session}\n\nSession data has been sent to the bot.`;
+      
+      console.log('Sending message:', messageText);
+      
       // Send to bot via Telegram Bot API
-      const response = await fetch(`https://api.telegram.org/bot${this.getBotToken()}/sendMessage`, {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chat_id: this.getChatId(),
-          text: `📊 **PWA Session Complete!**\n\n📊 Score: ${this.currentScore}/100\n⏱️ Duration: ${this.formatDuration(Date.now() - this.startTime)}\n🏷️ Badges: ${this.currentBadges.join(', ') || 'None detected'}\n📅 Session: ${this.config.session}\n\nSession data has been sent to the bot.`,
+          chat_id: chatId,
+          text: messageText,
           parse_mode: 'Markdown'
         })
       });
+      
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Telegram API error:', errorText);
+        throw new Error(`Telegram API error: ${response.status} - ${errorText}`);
+      }
       
       if (response.ok) {
         // Show success message
@@ -345,11 +365,19 @@ class SilliApp {
     // Extract bot token from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const botToken = urlParams.get('bot_token');
+    console.log('URL parameters:', window.location.search);
+    console.log('Bot token from URL:', botToken);
+    
     if (!botToken) {
       console.error('No bot_token found in URL parameters');
       throw new Error('Bot token not provided');
     }
-    return botToken;
+    
+    // Decode the bot token in case it was URL encoded
+    const decodedToken = decodeURIComponent(botToken);
+    console.log('Decoded bot token:', decodedToken);
+    
+    return decodedToken;
   }
 
   private getChatId(): string {
