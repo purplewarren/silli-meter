@@ -49,3 +49,4 @@ All audio analysis runs locally on your device. No audio data is uploaded or tra
 # Updated workflow
 # Simplified workflow
 # Manual deployment approach
+# Simple build workflow
