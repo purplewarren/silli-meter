@@ -370,6 +370,7 @@ class SilliApp {
     
     if (!botToken) {
       console.error('No bot_token found in URL parameters');
+      console.log('Available URL parameters:', Array.from(urlParams.entries()));
       throw new Error('Bot token not provided');
     }
     
