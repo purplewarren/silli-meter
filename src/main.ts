@@ -307,7 +307,7 @@ class SilliApp {
         },
         body: JSON.stringify({
           chat_id: this.getChatId(),
-          text: `📊 Session Complete!\n\nScore: ${this.currentScore}/100\nDuration: ${this.formatDuration(Date.now() - this.startTime)}\nBadges: ${this.currentBadges.join(', ')}\n\nSession data attached.`,
+          text: `📊 **PWA Session Complete!**\n\n📊 Score: ${this.currentScore}/100\n⏱️ Duration: ${this.formatDuration(Date.now() - this.startTime)}\n🏷️ Badges: ${this.currentBadges.join(', ') || 'None detected'}\n📅 Session: ${this.config.session}\n\nSession data has been sent to the bot.`,
           parse_mode: 'Markdown'
         })
       });
