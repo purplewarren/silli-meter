@@ -7,6 +7,7 @@ import { Scorer } from './dsp/scoring.js';
 import { AudioProcessor } from './audio/worklet-node.js';
 import { SessionExporter } from './util/export.js';
 import { ShareCard } from './ui/share-card.js';
+import './style.css';
 
 interface AppConfig {
   mode: 'helper' | 'low_power';

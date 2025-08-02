@@ -37,7 +37,7 @@ export class AudioProcessor {
       // Create processor node
       this.processor = new AudioWorkletNode(this.audioContext, 'audio-processor', {
         numberOfInputs: 1,
-        numberOfOutputs: 0,
+        numberOfOutputs: 1, // Changed from 0 to 1
         processorOptions: {
           frameSize: 1024
         }
@@ -52,7 +52,8 @@ export class AudioProcessor {
 
       // Connect nodes
       this.source.connect(this.processor);
-      this.processor.connect(this.audioContext.destination);
+      // Don't connect to destination to avoid feedback
+      // this.processor.connect(this.audioContext.destination);
 
     } catch (error) {
       console.error('Failed to initialize audio:', error);
