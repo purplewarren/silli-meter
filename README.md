@@ -48,3 +48,4 @@ All audio analysis runs locally on your device. No audio data is uploaded or tra
 - **Export**: Session JSON contract + PNG timeline cards # Trigger deployment
 # Updated workflow
 # Simplified workflow
+# Manual deployment approach
