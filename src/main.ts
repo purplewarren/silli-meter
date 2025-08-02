@@ -146,7 +146,19 @@ class SilliApp {
       
     } catch (error) {
       console.error('Failed to start session:', error);
-      alert('Could not start audio analysis. Please check microphone permissions.');
+      
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          alert('Microphone access denied. Please allow microphone permissions and try again.');
+        } else if (error.name === 'NotFoundError') {
+          alert('No microphone found. Please connect a microphone and try again.');
+        } else {
+          alert(`Audio initialization failed: ${error.message}. Please check microphone permissions and try again.`);
+        }
+      } else {
+        alert('Could not start audio analysis. Please check microphone permissions and try again.');
+      }
     }
   }
 

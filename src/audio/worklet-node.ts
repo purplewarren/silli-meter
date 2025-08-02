@@ -32,7 +32,7 @@ export class AudioProcessor {
       this.source = this.audioContext.createMediaStreamSource(this.stream);
 
       // Load and register worklet
-      await this.audioContext.audioWorklet.addModule('/src/audio/worklet-processor.js');
+      await this.audioContext.audioWorklet.addModule('/silli-meter/audio-worklet-processor.js');
 
       // Create processor node
       this.processor = new AudioWorkletNode(this.audioContext, 'audio-processor', {
