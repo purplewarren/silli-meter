@@ -94,7 +94,7 @@ class SilliApp {
           <div class="controls">
             <button id="start-btn" class="btn primary">Start Session</button>
             <button id="stop-btn" class="btn secondary" disabled>Stop Session</button>
-            <button id="export-btn" class="btn secondary" disabled>Export Results</button>
+            <button id="export-btn" class="btn secondary" disabled>Process Results</button>
           </div>
           
           <div class="session-info">
@@ -298,10 +298,11 @@ class SilliApp {
       exportBtn.textContent = 'Sending to Bot...';
       exportBtn.disabled = true;
       
-      // Note: We can't directly send to bot from PWA due to CORS restrictions
-      // Instead, we'll provide the session data for manual ingestion
+      // Send session data directly to bot via Telegram Bot API
+      const botToken = this.getBotToken();
+      const chatId = this.getChatId();
       
-      console.log('Session completed:', {
+      console.log('Sending session to bot:', {
         score: this.currentScore,
         duration: this.formatDuration(Date.now() - this.startTime),
         badges: this.currentBadges,
@@ -309,34 +310,46 @@ class SilliApp {
         token: this.config.token ? '[REDACTED]' : 'none'
       });
       
-      // Since we can't directly send to bot from PWA, we'll download the data
-      // and provide instructions for manual ingestion
-      this.downloadFile(sessionJson, 'session.json', 'application/json');
-      this.downloadFile(pngBlob, 'session-card.png', 'image/png');
+      // Create session message
+      const sessionMessage = `📊 **PWA Session Complete!**\n\n📊 Score: ${this.currentScore}/100\n⏱️ Duration: ${this.formatDuration(Date.now() - this.startTime)}\n🏷️ Badges: ${this.currentBadges.join(', ') || 'None detected'}\n📅 Session: ${this.config.session}${this.config.token ? `\n🔐 Token: ${this.config.token}` : ''}\n\nSession data has been sent to the bot.`;
       
-      // Show success message
-      exportBtn.textContent = '✅ Data Ready';
-      setTimeout(() => {
-        exportBtn.textContent = 'Export Results';
-        exportBtn.disabled = false;
-      }, 3000);
+      // Send to bot via Telegram Bot API
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: sessionMessage,
+          parse_mode: 'Markdown'
+        })
+      });
       
-      // Display instructions
-      const instructions = document.createElement('div');
-      instructions.innerHTML = `
-        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <h4>📤 Session Data Ready</h4>
-          <p>Your session data has been downloaded. To send it to the bot:</p>
-          <ol>
-            <li>Go back to Telegram</li>
-            <li>Send the <code>session.json</code> file to the bot</li>
-            <li>The bot will automatically process your session</li>
-          </ol>
-          <p><strong>Session ID:</strong> ${this.config.session}</p>
-          ${this.config.token ? `<p><strong>Token:</strong> ${this.config.token}</p>` : ''}
-        </div>
-      `;
-      document.querySelector('.container')?.appendChild(instructions);
+      console.log('Bot response status:', response.status);
+      
+      if (response.ok) {
+        // Show success message
+        exportBtn.textContent = '✅ Sent to Bot';
+        setTimeout(() => {
+          exportBtn.textContent = 'Process Results';
+          exportBtn.disabled = false;
+        }, 3000);
+        
+        // Display success message
+        const successMessage = document.createElement('div');
+        successMessage.innerHTML = `
+          <div style="background: #f0f9ff; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <h4>✅ Session Sent Successfully!</h4>
+            <p>Your session data has been automatically sent to the bot.</p>
+            <p><strong>Session ID:</strong> ${this.config.session}</p>
+            <p>Check your Telegram chat for confirmation.</p>
+          </div>
+        `;
+        document.querySelector('.container')?.appendChild(successMessage);
+      } else {
+        throw new Error(`Bot communication failed: ${response.status}`);
+      }
       
     } catch (error) {
       console.error('Failed to process session:', error);
@@ -354,9 +367,32 @@ class SilliApp {
     }
   }
 
+  private getBotToken(): string {
+    // Extract bot token from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const botToken = urlParams.get('bot_token');
+    console.log('URL parameters:', window.location.search);
+    console.log('Bot token from URL:', botToken ? '[REDACTED]' : 'NOT_FOUND');
+    
+    if (!botToken) {
+      console.error('No bot_token found in URL parameters');
+      console.log('Available URL parameters:', Array.from(urlParams.entries()).map(([k, v]) => [k, k === 'bot_token' ? '[REDACTED]' : v]));
+      throw new Error('Bot token not provided');
+    }
+    
+    // Decode the bot token in case it was URL encoded
+    const decodedToken = decodeURIComponent(botToken);
+    console.log('Decoded bot token:', '[REDACTED]');
+    
+    return decodedToken;
+  }
 
-
-
+  private getChatId(): string {
+    // Extract chat ID from family ID
+    const familyId = this.config.family;
+    const chatId = familyId.replace('fam_', '');
+    return chatId;
+  }
 
   private formatDuration(duration: number): string {
     const minutes = Math.floor(duration / 60000);
