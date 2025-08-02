@@ -342,9 +342,14 @@ class SilliApp {
 
 
   private getBotToken(): string {
-    // Extract bot token from URL or use a default
+    // Extract bot token from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('bot_token') || '8346175218:AAFHAoRq8YTxYwN1ubZAewpd36TP9q1a4ko';
+    const botToken = urlParams.get('bot_token');
+    if (!botToken) {
+      console.error('No bot_token found in URL parameters');
+      throw new Error('Bot token not provided');
+    }
+    return botToken;
   }
 
   private getChatId(): string {
