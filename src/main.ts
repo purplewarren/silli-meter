@@ -2,12 +2,15 @@
  * Main app - wires UI + modes + deep-link params
  */
 
+
 import { FeatureExtractor } from './dsp/features.js';
 import { Scorer } from './dsp/scoring.js';
 import { AudioProcessor } from './audio/worklet-node.js';
 import { SessionExporter } from './util/export.js';
 import { ShareCard } from './ui/share-card.js';
 import './style.css';
+
+const RELAY_INGEST_URL = 'https://silli-auto-ingest-relay.silli-tg-bot.workers.dev/ingest';
 
 interface AppConfig {
   mode: 'helper' | 'low_power';
@@ -34,6 +37,7 @@ class SilliApp {
 
   constructor() {
     this.config = this.parseUrlParams();
+    this.stripTokenFromUrl();
     this.featureExtractor = new FeatureExtractor();
     this.scorer = new Scorer();
     this.sessionExporter = new SessionExporter();
@@ -49,7 +53,7 @@ class SilliApp {
       mode: (urlParams.get('mode') as 'helper' | 'low_power') || 'helper',
       family: urlParams.get('family') || 'fam_unknown',
       session: urlParams.get('session') || `fam_unknown_${Date.now()}`,
-      token: urlParams.get('token') || null
+      token: urlParams.get('tok') || null
     };
   }
 
@@ -287,118 +291,64 @@ class SilliApp {
       duration: Date.now() - this.startTime
     });
     
-    // Send data back to bot via Telegram
-    await this.sendToBot(sessionJson, pngBlob);
+    // Send data to relay
+    await this.sendToRelay(sessionJson, pngBlob);
   }
 
-  private async sendToBot(sessionJson: string, pngBlob: Blob): Promise<void> {
+  private async sendToRelay(sessionJson: string, pngBlob: Blob): Promise<void> {
+    const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
     try {
-      // Show sending status
-      const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-      exportBtn.textContent = 'Sending to Bot...';
+      exportBtn.textContent = 'Sending to Silli...';
       exportBtn.disabled = true;
-      
-      // Send session data directly to bot via Telegram Bot API
-      const botToken = this.getBotToken();
-      const chatId = this.getChatId();
-      
-      console.log('Sending session to bot:', {
-        score: this.currentScore,
-        duration: this.formatDuration(Date.now() - this.startTime),
-        badges: this.currentBadges,
-        session: this.config.session,
-        token: this.config.token ? '[REDACTED]' : 'none'
-      });
-      
-      // Create session message
-      const sessionMessage = `📊 **PWA Session Complete!**\n\n📊 Score: ${this.currentScore}/100\n⏱️ Duration: ${this.formatDuration(Date.now() - this.startTime)}\n🏷️ Badges: ${this.currentBadges.join(', ') || 'None detected'}\n📅 Session: ${this.config.session}${this.config.token ? `\n🔐 Token: ${this.config.token}` : ''}\n\nSession data has been sent to the bot.`;
-      
-      // Send to bot via Telegram Bot API
-      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+
+      const token = this.config.token;
+      if (!token) {
+        console.warn('No session token found in URL params (tok=...)');
+        this.fallbackDownload(sessionJson, pngBlob, 'Missing session token. Files downloaded instead.');
+        return;
+      }
+
+      const resp = await fetch(RELAY_INGEST_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: sessionMessage,
-          parse_mode: 'Markdown'
-        })
+        body: sessionJson
       });
-      
-      console.log('Bot response status:', response.status);
-      
-      if (response.ok) {
-        // Show success message
-        exportBtn.textContent = '✅ Sent to Bot';
-        setTimeout(() => {
-          exportBtn.textContent = 'Process Results';
-          exportBtn.disabled = false;
-        }, 3000);
-        
-        // Display success message
-        const successMessage = document.createElement('div');
-        successMessage.innerHTML = `
-          <div style="background: #f0f9ff; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 16px 0;">
-            <h4>✅ Session Sent Successfully!</h4>
-            <p>Your session data has been automatically sent to the bot.</p>
-            <p><strong>Session ID:</strong> ${this.config.session}</p>
-            <p>Check your Telegram chat for confirmation.</p>
-          </div>
-        `;
-        document.querySelector('.container')?.appendChild(successMessage);
-      } else {
-        throw new Error(`Bot communication failed: ${response.status}`);
+
+      if (!resp.ok) {
+        const txt = await resp.text().catch(() => '');
+        throw new Error(`Relay error: ${resp.status} ${txt}`);
       }
-      
+
+      // Success UI
+      const success = document.createElement('div');
+      success.innerHTML = `
+        <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <h4>✅ Session Sent to Silli</h4>
+          <p>Your session report was delivered securely.</p>
+          <p><strong>Session ID:</strong> ${this.config.session}</p>
+          <p>You’ll see a confirmation in your Telegram chat.</p>
+        </div>
+      `;
+      document.querySelector('.container')?.appendChild(success);
+
+      exportBtn.textContent = 'Sent ✅';
     } catch (error) {
-      console.error('Failed to process session:', error);
-      
-      // Fallback to download if processing fails
-      this.downloadFile(sessionJson, 'session.json', 'application/json');
-      this.downloadFile(pngBlob, 'session-card.png', 'image/png');
-      
-      const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-      exportBtn.textContent = 'Downloaded (Error occurred)';
+      console.error('Failed to send to relay:', error);
+      this.fallbackDownload(sessionJson, pngBlob, 'Auto-send failed (offline or network issue). Files downloaded instead.');
+      exportBtn.textContent = 'Downloaded';
+    } finally {
       setTimeout(() => {
-        exportBtn.textContent = 'Export Results';
+        exportBtn.textContent = 'Process Results';
         exportBtn.disabled = false;
       }, 3000);
     }
   }
 
-  private getBotToken(): string {
-    // Extract bot token from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const botToken = urlParams.get('bot_token');
-    console.log('URL parameters:', window.location.search);
-    console.log('Bot token from URL:', botToken ? '[REDACTED]' : 'NOT_FOUND');
-    
-    if (!botToken) {
-      console.error('No bot_token found in URL parameters');
-      console.log('Available URL parameters:', Array.from(urlParams.entries()).map(([k, v]) => [k, k === 'bot_token' ? '[REDACTED]' : v]));
-      throw new Error('Bot token not provided');
-    }
-    
-    // Decode the bot token in case it was URL encoded
-    const decodedToken = decodeURIComponent(botToken);
-    console.log('Decoded bot token:', '[REDACTED]');
-    
-    return decodedToken;
-  }
 
-  private getChatId(): string {
-    // Extract chat ID from family ID
-    const familyId = this.config.family;
-    const chatId = familyId.replace('fam_', '');
-    return chatId;
-  }
 
-  private formatDuration(duration: number): string {
-    const minutes = Math.floor(duration / 60000);
-    const seconds = Math.floor((duration % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  }
 
   private downloadFile(content: any, filename: string, mimeType: string): void {
     const blob = new Blob([content], { type: mimeType });
@@ -408,6 +358,30 @@ class SilliApp {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  private fallbackDownload(sessionJson: string, pngBlob: Blob, reason: string): void {
+    this.downloadFile(sessionJson, 'session.json', 'application/json');
+    this.downloadFile(pngBlob, 'session-card.png', 'image/png');
+
+    const fallback = document.createElement('div');
+    fallback.innerHTML = `
+      <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+        <h4>⚠️ Auto-send Unavailable</h4>
+        <p>${reason}</p>
+        <p><strong>Session ID:</strong> ${this.config.session}</p>
+        <p>You can upload the session.json to the bot with /ingest as a fallback.</p>
+      </div>
+    `;
+    document.querySelector('.container')?.appendChild(fallback);
+  }
+
+  private stripTokenFromUrl(): void {
+    const u = new URL(window.location.href);
+    if (u.searchParams.has('tok')) {
+      u.searchParams.delete('tok');
+      history.replaceState(null, '', u.toString());
+    }
   }
 }
 
