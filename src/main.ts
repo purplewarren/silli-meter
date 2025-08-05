@@ -37,7 +37,9 @@ class SilliApp {
 
   constructor() {
     this.config = this.parseUrlParams();
+    console.log('Token after parsing:', this.config.token ? 'FOUND' : 'NOT_FOUND');
     this.stripTokenFromUrl();
+    console.log('Token after stripping:', this.config.token ? 'FOUND' : 'NOT_FOUND');
     this.featureExtractor = new FeatureExtractor();
     this.scorer = new Scorer();
     this.sessionExporter = new SessionExporter();
