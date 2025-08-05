@@ -310,6 +310,10 @@ class SilliApp {
         return;
       }
 
+      console.log('Sending to relay with token:', token ? 'PRESENT' : 'MISSING');
+      console.log('Relay URL:', RELAY_INGEST_URL);
+      console.log('Session JSON length:', sessionJson.length);
+      
       const resp = await fetch(RELAY_INGEST_URL, {
         method: 'POST',
         headers: {
@@ -319,10 +323,16 @@ class SilliApp {
         body: sessionJson
       });
 
+      console.log('Relay response status:', resp.status);
+      
       if (!resp.ok) {
         const txt = await resp.text().catch(() => '');
+        console.error('Relay error response:', txt);
         throw new Error(`Relay error: ${resp.status} ${txt}`);
       }
+      
+      const responseText = await resp.text();
+      console.log('Relay success response:', responseText);
 
       // Success UI
       const success = document.createElement('div');
