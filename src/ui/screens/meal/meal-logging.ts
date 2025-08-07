@@ -11,6 +11,7 @@ export class MealLoggingScreen {
   private action: string;
   private rating: string;
   private textDescription: string | null = null;
+  private hasImage: boolean = false; // Track if an image was captured
 
   constructor(container: HTMLElement, router: Router, action: string, rating: string) {
     this.container = container;
@@ -71,10 +72,18 @@ export class MealLoggingScreen {
               <div class="form-group">
                 <label>Rating</label>
                 <div class="rating-display">
-                  <span class="stars">
-                    ${'⭐'.repeat(parseInt(this.rating) || 0)}${'☆'.repeat(5 - (parseInt(this.rating) || 0))}
-                  </span>
-                  <span class="rating-text">${this.getRatingText()}</span>
+                  <div class="star-rating">
+                    <div class="stars">
+                      <button class="star-btn ${parseInt(this.rating) >= 1 ? 'active' : ''}" data-rating="1">${parseInt(this.rating) >= 1 ? '⭐' : '☆'}</button>
+                      <button class="star-btn ${parseInt(this.rating) >= 2 ? 'active' : ''}" data-rating="2">${parseInt(this.rating) >= 2 ? '⭐' : '☆'}</button>
+                      <button class="star-btn ${parseInt(this.rating) >= 3 ? 'active' : ''}" data-rating="3">${parseInt(this.rating) >= 3 ? '⭐' : '☆'}</button>
+                      <button class="star-btn ${parseInt(this.rating) >= 4 ? 'active' : ''}" data-rating="4">${parseInt(this.rating) >= 4 ? '⭐' : '☆'}</button>
+                      <button class="star-btn ${parseInt(this.rating) >= 5 ? 'active' : ''}" data-rating="5">${parseInt(this.rating) >= 5 ? '⭐' : '☆'}</button>
+                    </div>
+                    <div class="rating-label">
+                      <span id="rating-text">${this.getRatingText()}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -173,6 +182,15 @@ export class MealLoggingScreen {
       });
     }
 
+    // Star rating buttons
+    const starBtns = this.container.querySelectorAll('.star-btn');
+    starBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const rating = (e.currentTarget as HTMLElement).dataset.rating || '0';
+        this.handleRatingChange(parseInt(rating));
+      });
+    });
+
     // Form validation
     const formInputs = this.container.querySelectorAll('.form-input, .form-select, .form-textarea');
     formInputs.forEach(input => {
@@ -180,6 +198,32 @@ export class MealLoggingScreen {
         this.validateForm();
       });
     });
+  }
+
+  private handleRatingChange(rating: number): void {
+    this.rating = rating.toString();
+    
+    // Update star display
+    const starButtons = this.container.querySelectorAll('.star-btn');
+    starButtons.forEach((btn, index) => {
+      const starBtn = btn as HTMLElement;
+      if (index < rating) {
+        starBtn.textContent = '⭐';
+        starBtn.classList.add('active');
+      } else {
+        starBtn.textContent = '☆';
+        starBtn.classList.remove('active');
+      }
+    });
+
+    // Update rating text
+    const ratingText = this.container.querySelector('#rating-text') as HTMLElement;
+    if (ratingText) {
+      const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+      ratingText.textContent = labels[rating] || 'Select a rating';
+    }
+    
+    this.validateForm();
   }
 
   private handleCapture(): void {
@@ -377,6 +421,7 @@ export class MealLoggingScreen {
           this.render(); // Re-render to show capture controls again
         });
       }
+      this.hasImage = true; // Set hasImage to true when an image is displayed
     }
   }
 
@@ -400,19 +445,45 @@ export class MealLoggingScreen {
   }
 
   private handleSave(): void {
-    // TODO: Implement save functionality
-    console.log('Saving meal log');
+    // Collect meal data
+    const mealType = (this.container.querySelector('#meal-type') as HTMLSelectElement)?.value || '';
+    const foodItems = (this.container.querySelector('#food-items') as HTMLInputElement)?.value || '';
+    const notes = (this.container.querySelector('#meal-notes') as HTMLTextAreaElement)?.value || '';
+    
+    // Generate mock analysis data (in a real app, this would come from image analysis)
+    const hasImage = this.hasImage;
+    const dietaryDiversity = hasImage ? 0.7 : 0.5; // Mock data
+    const clutterScore = hasImage ? 0.3 : 0.5; // Mock data
+    const plateCoverage = hasImage ? 0.6 : 0.5; // Mock data
+    
+    console.log('Saving meal log:', {
+      rating: this.rating,
+      mealType,
+      foodItems,
+      notes,
+      hasImage,
+      dietaryDiversity,
+      clutterScore,
+      plateCoverage
+    });
     
     // Log the text description if available
     if (this.textDescription) {
       console.log('Text description:', this.textDescription);
     }
     
-    // Navigate to insights
+    // Navigate to insights with actual data
     this.router.navigate({
       dyad: 'meal',
       screen: 'insights',
-      params: { action: 'saved', rating: this.rating }
+      params: { 
+        action: 'saved', 
+        rating: this.rating,
+        hasImage: hasImage.toString(),
+        dietaryDiversity: dietaryDiversity.toString(),
+        clutterScore: clutterScore.toString(),
+        plateCoverage: plateCoverage.toString()
+      }
     });
   }
 

@@ -466,13 +466,41 @@ export class MealInsightsScreen {
     const family = urlParams.get('family') || 'unknown';
     const session = urlParams.get('session') || `meal_${Date.now()}`;
     
-    // Create the payload for the bot
+    // Create the payload in the format the bot expects
     const payload = {
-      type: 'meal_export',
-      data: data,
-      timestamp: new Date().toISOString(),
+      ts_start: new Date().toISOString(),
+      duration_s: 0, // Meal sessions don't have duration
+      mode: 'helper',
       family_id: family,
-      session_id: session
+      session_id: session,
+      scales: {},
+      features_summary: {
+        level_dbfs_p50: -60,
+        centroid_norm_mean: 0,
+        flux_norm_mean: 0,
+        vad_fraction: 0,
+        stationarity: 0
+      },
+      score: {
+        short: data.metrics?.meal_mood || 0,
+        mid: data.metrics?.meal_mood || 0,
+        long: data.metrics?.meal_mood || 0
+      },
+      badges: data.badge ? [data.badge] : [],
+      events: [],
+      pii: false,
+      version: 'pwa_0.1',
+      context: {
+        dyad: 'meal',
+        rating: data.rating,
+        meal_mood: data.metrics?.meal_mood,
+        has_image: data.media_summaries?.image ? true : false,
+        dietary_diversity: data.media_summaries?.image?.dietary_diversity,
+        clutter_score: data.media_summaries?.image?.clutter_score,
+        plate_coverage: data.media_summaries?.image?.plate_coverage,
+        tip: data.tip
+      },
+      metrics: data.metrics
     };
 
     // Import the queue utility
