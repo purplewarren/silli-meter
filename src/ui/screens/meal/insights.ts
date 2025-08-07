@@ -364,7 +364,10 @@ export class MealInsightsScreen {
     // Simple response logic based on question keywords
     const lowerQuestion = question.toLowerCase();
     
-    if (lowerQuestion.includes('vegetable') || lowerQuestion.includes('veggie')) {
+    // Check for specific food items first
+    if (lowerQuestion.includes('broccoli') || lowerQuestion.includes('brocolli')) {
+      return `Great question about broccoli! Here are specific strategies to help your son enjoy it:\n\n**Make it Fun:**\n• Call it "little trees" or "dinosaur food"\n• Let him help wash and prepare it\n• Try different cooking methods (steamed, roasted, raw with dip)\n\n**Start Small:**\n• Begin with tiny pieces mixed into favorite foods\n• Gradually increase the amount over time\n• Don't force it - keep offering without pressure\n\n**Role Model:**\n• Eat broccoli enthusiastically in front of him\n• Talk about how much you enjoy it\n• Make it a family tradition\n\n**Be Patient:**\n• It can take 10-15 exposures before acceptance\n• Every child is different\n• Keep trying different approaches\n\nRemember: The goal is to create positive associations with healthy foods!`;
+    } else if (lowerQuestion.includes('vegetable') || lowerQuestion.includes('veggie')) {
       return `Great question! Here are some tips for encouraging vegetable consumption:\n\n1. **Lead by example** - Eat vegetables enthusiastically in front of your child\n2. **Make it fun** - Try "rainbow plates" with colorful vegetables\n3. **Involve them** - Let your child help choose and prepare vegetables\n4. **Start small** - Begin with tiny portions and gradually increase\n5. **Be patient** - It can take 10-15 exposures before a child accepts a new food\n\nRemember, every child is different, and it's normal for preferences to change over time.`;
     } else if (lowerQuestion.includes('snack') || lowerQuestion.includes('healthy')) {
       return `Here are some nutritious snack ideas for toddlers:\n\n**Fruits & Vegetables:**\n• Apple slices with peanut butter\n• Carrot sticks with hummus\n• Banana with yogurt\n\n**Protein-rich:**\n• Hard-boiled eggs\n• Cheese cubes\n• Greek yogurt\n\n**Grains:**\n• Whole grain crackers\n• Oatmeal with berries\n• Rice cakes\n\n**Avoid:** Processed snacks, sugary drinks, and large portions that might spoil their appetite for meals.`;
@@ -372,8 +375,12 @@ export class MealInsightsScreen {
       return `Picky eating is very common and usually temporary. Here's how to handle it:\n\n**Stay Calm:** Don't make mealtime a power struggle\n**Offer Choices:** "Would you like carrots or broccoli?"\n**Keep Trying:** Continue offering rejected foods in different ways\n**Set Limits:** "This is what's for dinner" (no short-order cooking)\n**Praise Efforts:** Celebrate when they try new foods\n**Be Patient:** This phase usually passes with time\n\nRemember: It's your job to offer healthy foods, but your child decides how much to eat.`;
     } else if (lowerQuestion.includes('schedule') || lowerQuestion.includes('meal time')) {
       return `A consistent meal schedule helps children develop healthy eating habits:\n\n**Typical Toddler Schedule:**\n• **Breakfast:** 7-8 AM\n• **Morning Snack:** 9-10 AM\n• **Lunch:** 11:30 AM - 12:30 PM\n• **Afternoon Snack:** 2-3 PM\n• **Dinner:** 5-6 PM\n\n**Tips:**\n• Keep meals 2-3 hours apart\n• Limit snacks to 30 minutes before meals\n• Offer water between meals\n• Be consistent with timing\n• Allow 20-30 minutes for meals\n\nAdjust timing based on your family's schedule and your child's hunger cues.`;
+    } else if (lowerQuestion.includes('portion') || lowerQuestion.includes('how much')) {
+      return `Portion sizes for toddlers can be tricky! Here's a general guide:\n\n**General Rule:** 1 tablespoon per year of age for each food group\n\n**Protein (meat, fish, eggs):**\n• 1-2 tablespoons for 1-2 year olds\n• 2-3 tablespoons for 3-4 year olds\n\n**Vegetables:**\n• 1-2 tablespoons (start small)\n• Offer more, but don't force\n\n**Fruits:**\n• 1/4 to 1/2 cup\n• Cut into small, safe pieces\n\n**Grains:**\n• 1/4 to 1/2 cup cooked\n• Whole grains preferred\n\n**Remember:**\n• Let your child decide how much to eat\n• Don't force them to finish\n• Offer seconds if they're still hungry\n• Every child is different!`;
+    } else if (lowerQuestion.includes('stress') || lowerQuestion.includes('difficult') || lowerQuestion.includes('frustrat')) {
+      return `Mealtime stress is very common! Here are strategies to make it more peaceful:\n\n**Before the Meal:**\n• Set clear expectations\n• Involve your child in preparation\n• Create a calm environment\n\n**During the Meal:**\n• Stay positive and relaxed\n• Avoid power struggles\n• Use positive reinforcement\n• Keep meals short (20-30 minutes)\n\n**After the Meal:**\n• Don't make food a reward or punishment\n• Clean up together\n• Move on to the next activity\n\n**Long-term Strategies:**\n• Establish consistent routines\n• Model healthy eating habits\n• Be patient with the process\n• Consider consulting a feeding specialist if needed\n\nRemember: A relaxed parent often leads to a relaxed child!`;
     } else {
-      return `Thank you for your question about feeding! Here are some general tips for healthy eating habits:\n\n**Create a Positive Environment:**\n• Eat together as a family when possible\n• Make mealtime pleasant and stress-free\n• Avoid using food as rewards or punishments\n\n**Offer Variety:**\n• Include foods from all food groups\n• Present foods in different ways\n• Let your child explore new textures and flavors\n\n**Trust Your Child:**\n• They know when they're hungry or full\n• Don't force them to eat\n• Offer appropriate portion sizes\n\nIf you have specific concerns about your child's eating, consider consulting with a pediatrician or registered dietitian.`;
+      return `Thank you for your question about feeding! Here are some general tips for healthy eating habits:\n\n**Create a Positive Environment:**\n• Eat together as a family when possible\n• Make mealtime pleasant and stress-free\n• Avoid using food as rewards or punishments\n\n**Offer Variety:**\n• Include foods from all food groups\n• Present foods in different ways\n• Let your child explore new textures and flavors\n\n**Trust Your Child:**\n• They know when they're hungry or full\n• Don't force them to eat\n• Offer appropriate portion sizes\n\n**Be Patient:**\n• Food preferences change over time\n• Keep offering rejected foods\n• Every child develops at their own pace\n\nIf you have specific concerns about your child's eating, consider consulting with a pediatrician or registered dietitian.`;
     }
   }
 
@@ -418,7 +425,7 @@ export class MealInsightsScreen {
   }
 
   private async handleExport(): Promise<void> {
-    // Create export JSON
+    // Create export data
     const exportData = {
       dyad: 'meal',
       timestamp: new Date().toISOString(),
@@ -436,9 +443,74 @@ export class MealInsightsScreen {
       tip: this.currentTip,
       badge: this.currentBadge
     };
+
+    try {
+      // Send to bot through relay
+      await this.sendToBot(exportData);
+      
+      // Also download JSON file as backup
+      this.downloadJSON(exportData);
+      
+      // Show success message
+      alert('Results exported successfully! Data sent to Silli Bot.');
+      
+    } catch (error) {
+      console.error('Error exporting:', error);
+      alert('Export failed. Please try again.');
+    }
+  }
+
+  private async sendToBot(data: any): Promise<void> {
+    // Get current session info from URL or config
+    const urlParams = new URLSearchParams(window.location.search);
+    const family = urlParams.get('family') || 'unknown';
+    const session = urlParams.get('session') || `meal_${Date.now()}`;
     
-    // Download JSON file
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    // Create the payload for the bot
+    const payload = {
+      type: 'meal_export',
+      data: data,
+      timestamp: new Date().toISOString(),
+      family_id: family,
+      session_id: session
+    };
+
+    // Import the queue utility
+    const { enqueue } = await import('../../../util/queue.js');
+    
+    // Add to pending queue for bot to pick up
+    enqueue({
+      family,
+      session,
+      payload: JSON.stringify(payload),
+      createdAt: Date.now()
+    });
+
+    // Try to send immediately if possible
+    await this.tryImmediateSend(payload);
+  }
+
+  private async tryImmediateSend(payload: any): Promise<void> {
+    try {
+      // Try to send directly to the bot's webhook endpoint
+      const response = await fetch('/api/relay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        console.log('Immediate send failed, data queued for later pickup');
+      }
+    } catch (error) {
+      console.log('Immediate send failed, data queued for later pickup:', error);
+    }
+  }
+
+  private downloadJSON(data: any): void {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

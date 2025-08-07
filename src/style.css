@@ -1845,3 +1845,92 @@ input:checked + .toggle-slider:before {
 .btn.secondary:disabled {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* Camera capture styles */
+.camera-capture {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.camera-controls {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.capture-photo-btn {
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+.cancel-camera-btn {
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+/* Text input mode styles */
+.text-input-mode {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-input-placeholder {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.text-input-placeholder .icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.text-input-placeholder p {
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.text-input-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.text-save-btn {
+  padding: 12px 20px;
+  font-size: 14px;
+}
+
+/* Text description saved styles */
+.text-description-saved {
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.saved-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.saved-text {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin: 15px 0;
+  font-style: italic;
+  color: #cccccc;
+}
+
+.edit-text-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+}

@@ -10,6 +10,7 @@ export class MealLoggingScreen {
   private router: Router;
   private action: string;
   private rating: string;
+  private textDescription: string | null = null;
 
   constructor(container: HTMLElement, router: Router, action: string, rating: string) {
     this.container = container;
@@ -182,11 +183,42 @@ export class MealLoggingScreen {
   }
 
   private handleCapture(): void {
-    // Create a file input for camera access
+    // Check if we're in "log" mode (manual text entry)
+    if (this.action === 'log') {
+      this.showTextInputMode();
+      return;
+    }
+
+    // For "snap" mode, try to use camera
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Try to access camera directly
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(stream => {
+          this.showCameraCapture(stream);
+        })
+        .catch(error => {
+          console.log('Camera access failed, falling back to file input:', error);
+          this.openFileInput(true); // true = prefer camera
+        });
+    } else {
+      // Fallback to file input with camera preference
+      this.openFileInput(true);
+    }
+  }
+
+  private handleUpload(): void {
+    // Always use file picker for upload
+    this.openFileInput(false); // false = file picker only
+  }
+
+  private openFileInput(preferCamera: boolean): void {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.capture = 'environment'; // Use back camera
+    
+    if (preferCamera) {
+      input.capture = 'environment'; // Use back camera
+    }
     
     input.addEventListener('change', (event) => {
       const file = (event.target as HTMLInputElement).files?.[0];
@@ -198,20 +230,123 @@ export class MealLoggingScreen {
     input.click();
   }
 
-  private handleUpload(): void {
-    // Create a file input for file selection
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    
-    input.addEventListener('change', (event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        this.handleImageSelected(file);
+  private showCameraCapture(stream: MediaStream): void {
+    const captureArea = this.container.querySelector('.capture-area');
+    if (captureArea) {
+      captureArea.innerHTML = `
+        <div class="camera-capture">
+          <video id="camera-video" autoplay playsinline style="width: 100%; max-height: 300px; border-radius: 8px;"></video>
+          <div class="camera-controls">
+            <button class="btn primary capture-photo-btn" data-action="capture-photo">📸 Take Photo</button>
+            <button class="btn secondary cancel-camera-btn" data-action="cancel-camera">❌ Cancel</button>
+          </div>
+        </div>
+      `;
+      
+      const video = captureArea.querySelector('#camera-video') as HTMLVideoElement;
+      video.srcObject = stream;
+      
+      // Bind camera controls
+      const capturePhotoBtn = captureArea.querySelector('.capture-photo-btn');
+      const cancelCameraBtn = captureArea.querySelector('.cancel-camera-btn');
+      
+      if (capturePhotoBtn) {
+        capturePhotoBtn.addEventListener('click', () => {
+          this.capturePhotoFromCamera(video, stream);
+        });
       }
-    });
+      
+      if (cancelCameraBtn) {
+        cancelCameraBtn.addEventListener('click', () => {
+          stream.getTracks().forEach(track => track.stop());
+          this.render(); // Re-render to show original controls
+        });
+      }
+    }
+  }
+
+  private capturePhotoFromCamera(video: HTMLVideoElement, stream: MediaStream): void {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
     
-    input.click();
+    if (context) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+          this.handleImageSelected(file);
+        }
+        stream.getTracks().forEach(track => track.stop());
+      }, 'image/jpeg', 0.8);
+    }
+  }
+
+  private showTextInputMode(): void {
+    const captureArea = this.container.querySelector('.capture-area');
+    if (captureArea) {
+      captureArea.innerHTML = `
+        <div class="text-input-mode">
+          <div class="text-input-placeholder">
+            <span class="icon">📝</span>
+            <p>Describe the meal manually</p>
+          </div>
+          
+          <div class="text-input-controls">
+            <textarea class="form-textarea" id="meal-description" placeholder="Describe what was served, how much was eaten, any observations..."></textarea>
+            <button class="btn primary text-save-btn" data-action="save-text">💾 Save Description</button>
+          </div>
+        </div>
+      `;
+      
+      // Bind text save button
+      const textSaveBtn = captureArea.querySelector('.text-save-btn');
+      if (textSaveBtn) {
+        textSaveBtn.addEventListener('click', () => {
+          this.handleTextDescription();
+        });
+      }
+    }
+  }
+
+  private handleTextDescription(): void {
+    const textArea = this.container.querySelector('#meal-description') as HTMLTextAreaElement;
+    const description = textArea?.value.trim();
+    
+    if (description) {
+      // Store the text description
+      this.textDescription = description;
+      this.enableSaveButton();
+      
+      // Show confirmation
+      const captureArea = this.container.querySelector('.capture-area');
+      if (captureArea) {
+        captureArea.innerHTML = `
+          <div class="text-description-saved">
+            <div class="saved-icon">✅</div>
+            <p>Description saved!</p>
+            <div class="saved-text">${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</div>
+            <button class="btn secondary edit-text-btn" data-action="edit-text">✏️ Edit</button>
+          </div>
+        `;
+        
+        // Bind edit button
+        const editBtn = captureArea.querySelector('.edit-text-btn');
+        if (editBtn) {
+          editBtn.addEventListener('click', () => {
+            this.showTextInputMode();
+            const textArea = this.container.querySelector('#meal-description') as HTMLTextAreaElement;
+            if (textArea) {
+              textArea.value = description;
+            }
+          });
+        }
+      }
+    } else {
+      alert('Please enter a meal description.');
+    }
   }
 
   private handleImageSelected(file: File): void {
@@ -267,6 +402,11 @@ export class MealLoggingScreen {
   private handleSave(): void {
     // TODO: Implement save functionality
     console.log('Saving meal log');
+    
+    // Log the text description if available
+    if (this.textDescription) {
+      console.log('Text description:', this.textDescription);
+    }
     
     // Navigate to insights
     this.router.navigate({

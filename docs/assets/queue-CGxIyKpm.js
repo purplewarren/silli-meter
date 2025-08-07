@@ -1,0 +1,1 @@
+const n="silli_pending_sessions_v1";function r(t){const e=s();e.push(t),localStorage.setItem(n,JSON.stringify(e))}function s(){try{const t=localStorage.getItem(n);return t?JSON.parse(t):[]}catch{return[]}}export{r as enqueue,s as readAll};
