@@ -1934,3 +1934,119 @@ input:checked + .toggle-slider:before {
   padding: 10px 20px;
   font-size: 14px;
 }
+
+/* Header layout with language selector */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.header-content h1 {
+  margin: 0;
+  flex: 1;
+}
+
+/* Language Selector Styles */
+.language-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.language-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.language-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.language-flag {
+  font-size: 16px;
+}
+
+.language-name {
+  font-weight: 500;
+}
+
+.language-arrow {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(45, 45, 45, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 0;
+  margin-top: 4px;
+  min-width: 160px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.language-option {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.language-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.language-option.active {
+  background: rgba(99, 102, 241, 0.2);
+  color: #6366f1;
+}
+
+.language-option:not(.active) .language-flag {
+  opacity: 0.7;
+}
+
+/* Responsive design for language selector */
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .header-content h1 {
+    text-align: center;
+  }
+  
+  .language-selector {
+    align-self: center;
+  }
+  
+  .language-dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

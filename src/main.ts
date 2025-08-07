@@ -3,11 +3,13 @@
  */
 
 import { Router } from './ui/router.js';
+import { i18n } from './i18n.js';
+import { LanguageSelector } from './ui/language-selector.js';
 import { TantrumHomeScreen } from './ui/screens/tantrum/home.js';
 import { TantrumCaptureScreen } from './ui/screens/tantrum/capture.js';
-import { TantrumThermoScreen } from './ui/screens/tantrum/thermo.js';
 import { TantrumHistoryScreen } from './ui/screens/tantrum/history.js';
 import { TantrumSettingsScreen } from './ui/screens/tantrum/settings.js';
+import { TantrumThermoScreen } from './ui/screens/tantrum/thermo.js';
 import { MealHomeScreen } from './ui/screens/meal/home.js';
 import { MealLoggingScreen } from './ui/screens/meal/meal-logging.js';
 import { MealInsightsScreen } from './ui/screens/meal/insights.js';
@@ -247,13 +249,16 @@ class SilliApp {
 
   private renderNightScreen(): void {
     // Fallback to original night helper functionality
-    const dyadName = 'Night Helper';
+    const dyadName = i18n.t('pwa.title');
     
     this.container.innerHTML = `
       <div class="container">
         <header>
-          <h1>Silli ${dyadName}</h1>
-          <p class="mode">${this.config.mode === 'helper' ? 'Helper Mode' : 'Low-Power Mode'}</p>
+          <div class="header-content">
+            <h1>Silli ${dyadName}</h1>
+            <div id="language-selector-container"></div>
+          </div>
+          <p class="mode">${this.config.mode === 'helper' ? i18n.t('pwa.mode_label') : 'Low-Power Mode'}</p>
         </header>
         
         <main>
@@ -267,44 +272,53 @@ class SilliApp {
               </svg>
               <div class="score-text">
                 <span id="score-value">0</span>
-                <div class="score-label">Score</div>
+                <div class="score-label">${i18n.t('pwa.score_ring.label')}</div>
               </div>
             </div>
           </div>
 
           <div class="badges">
-            <h3>Badges</h3>
+            <h3>${i18n.t('pwa.badges.label')}</h3>
             <div id="badges-container"></div>
           </div>
 
           <div class="tips">
-            <h3>Tips</h3>
+            <h3>${i18n.t('pwa.tips.title')}</h3>
             <div id="tips-container"></div>
           </div>
 
           <div class="controls">
-            <button id="start-btn" class="btn primary">Start Session</button>
-            <button id="stop-btn" class="btn secondary" disabled>Stop Session</button>
-            <button id="export-btn" class="btn secondary" disabled>Export Results</button>
+            <button id="start-btn" class="btn primary">${i18n.t('pwa.button.start')}</button>
+            <button id="stop-btn" class="btn secondary" disabled>${i18n.t('pwa.button.stop')}</button>
+            <button id="export-btn" class="btn secondary" disabled>${i18n.t('pwa.button.process')}</button>
           </div>
 
           <div class="session-info">
             <p>Family: ${this.config.family}</p>
-            <p>Session: ${this.config.session}</p>
-            <p id="timer">Duration: 00:00</p>
+            <p>${i18n.t('pwa.session.info_id', { id: this.config.session })}</p>
+            <p id="timer">${i18n.t('pwa.session.duration', { mm: '00', ss: '00' })}</p>
           </div>
         </main>
 
         <footer>
           <div class="privacy">
-            <p>🔒 All processing happens on your device. Audio stays private.</p>
+            <p>${i18n.t('pwa.footer_privacy')}</p>
           </div>
         </footer>
       </div>
     `;
 
-    // Add basic night helper functionality here if needed
-    console.log('Night helper screen rendered');
+    // Initialize language selector
+    const languageContainer = this.container.querySelector('#language-selector-container') as HTMLElement;
+    if (languageContainer) {
+      const languageSelector = new LanguageSelector(languageContainer);
+      languageSelector.render();
+    }
+
+    // Listen for language changes
+    window.addEventListener('languageChanged', () => {
+      this.renderNightScreen();
+    });
   }
 
   private stripTokenFromUrl(): void {
