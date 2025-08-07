@@ -1,4 +1,4 @@
-(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const n of document.querySelectorAll('link[rel="modulepreload"]'))s(n);new MutationObserver(n=>{for(const i of n)if(i.type==="childList")for(const o of i.addedNodes)o.tagName==="LINK"&&o.rel==="modulepreload"&&s(o)}).observe(document,{childList:!0,subtree:!0});function t(n){const i={};return n.integrity&&(i.integrity=n.integrity),n.referrerPolicy&&(i.referrerPolicy=n.referrerPolicy),n.crossOrigin==="use-credentials"?i.credentials="include":n.crossOrigin==="anonymous"?i.credentials="omit":i.credentials="same-origin",i}function s(n){if(n.ep)return;n.ep=!0;const i=t(n);fetch(n.href,i)}})();class O{routes=new Map;currentRoute=null;constructor(){this.handleHashChange=this.handleHashChange.bind(this),window.addEventListener("hashchange",this.handleHashChange),window.addEventListener("load",this.handleHashChange)}register(e,t){const s=this.routeToKey(e);this.routes.set(s,t)}navigate(e){const t=this.routeToHash(e);window.location.hash=t}getCurrentRoute(){return this.currentRoute}routeToKey(e){return`${e.dyad}:${e.screen}`}routeToHash(e){let t=`#${e.dyad}/${e.screen}`;if(e.params){const s=new URLSearchParams(e.params);t+=`?${s.toString()}`}return t}hashToRoute(e){const t=e.substring(1),[s,n]=t.split("?"),[i,o]=s.split("/"),a={dyad:i||"night",screen:o||"home"};if(n){const d=new URLSearchParams(n);a.params=Object.fromEntries(d.entries())}return a}handleHashChange(){const e=window.location.hash||"#night/home",t=this.hashToRoute(e);this.currentRoute=t;const s=this.routeToKey(t),n=this.routes.get(s);if(n)n();else{console.warn(`No handler found for route: ${s}`);const i=`${t.dyad}:home`,o=this.routes.get(i);o&&o()}}destroy(){window.removeEventListener("hashchange",this.handleHashChange),window.removeEventListener("load",this.handleHashChange)}}const c={privacy:{onDeviceProcessing:"All processing happens on your device. Nothing is sent to our servers.",photosStayPrivate:"Photos stay private and are analyzed on your device only.",recordingsNeverLeave:"Your recordings never leave your device.",dataStaysLocal:"Photos and data stay on your device. No cloud storage."},empty:{noSessionsYet:"No sessions yet. Start tracking to see your history here."},buttons:{cancel:"Cancel",saveMeal:"Save Meal",analyze:"Analyze",uploadVoice:"Upload Voice",uploadVideo:"Upload Video",addText:"Add Text",snapMeal:"Snap Meal",askQuestion:"Ask a Question",logMeal:"Log Meal",viewPatterns:"View Patterns",history:"History",gallery:"Gallery",settings:"Settings"},forms:{trigger:"Trigger",duration:"Duration (minutes)",coRegulation:"Co-regulation strategies",notes:"Notes (optional)",environmentNoise:"Environment noise"},placeholders:{selectTrigger:"—",processing:"Processing..."},intensity:{mild:"1 - Mild",extreme:"10 - Extreme"},tabs:{recordSession:"Record Session",history:"History"},coRegulation:[{value:"hold",label:"Hold"},{value:"mirror",label:"Mirror"},{value:"label",label:"Label"},{value:"breathe",label:"Breathe"},{value:"safe_space",label:"Safe Space"},{value:"low_stimulus",label:"Low Stimulus"}],triggers:["transition","frustration","limit","separation","unknown"],sections:{howIntense:"How intense is this moment?",howWouldYouLike:"How would you like to share?",howWasMeal:"How was this meal?",whatWouldYouLike:"What would you like to do?",quickActions:"Quick Actions"},descriptions:{recordOrUpload:"Record or upload audio",recordOrUploadVideo:"Record or upload video",describeWhatHappened:"Describe what happened",takePhotoOfMeal:"Take a photo of the meal",getInsightsAboutFeeding:"Get insights about feeding",selectRating:"Select a rating"},app:{tantrumTranslator:"Tantrum Translator",mealMoodCompanion:"Meal Mood Companion",understandBeneathSurface:"Understand what's happening beneath the surface",trackEatingPatterns:"Track and understand your child's eating patterns"}};class j{container;router;intensitySlider=null;constructor(e,t){this.container=e,this.router=t}render(){this.container.innerHTML=`
+(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const n of document.querySelectorAll('link[rel="modulepreload"]'))s(n);new MutationObserver(n=>{for(const i of n)if(i.type==="childList")for(const o of i.addedNodes)o.tagName==="LINK"&&o.rel==="modulepreload"&&s(o)}).observe(document,{childList:!0,subtree:!0});function t(n){const i={};return n.integrity&&(i.integrity=n.integrity),n.referrerPolicy&&(i.referrerPolicy=n.referrerPolicy),n.crossOrigin==="use-credentials"?i.credentials="include":n.crossOrigin==="anonymous"?i.credentials="omit":i.credentials="same-origin",i}function s(n){if(n.ep)return;n.ep=!0;const i=t(n);fetch(n.href,i)}})();class O{routes=new Map;currentRoute=null;constructor(){this.handleHashChange=this.handleHashChange.bind(this),window.addEventListener("hashchange",this.handleHashChange),window.addEventListener("load",this.handleHashChange)}register(e,t){const s=this.routeToKey(e);this.routes.set(s,t)}navigate(e){const t=this.routeToHash(e);window.location.hash=t}getCurrentRoute(){return this.currentRoute}routeToKey(e){return`${e.dyad}:${e.screen}`}routeToHash(e){let t=`#${e.dyad}/${e.screen}`;if(e.params){const s=new URLSearchParams(e.params);t+=`?${s.toString()}`}return t}hashToRoute(e){const t=e.substring(1),[s,n]=t.split("?"),[i,o]=s.split("/"),a={dyad:i||"night",screen:o||"home"};if(n){const l=new URLSearchParams(n);a.params=Object.fromEntries(l.entries())}return a}handleHashChange(){const e=window.location.hash||"#night/home",t=this.hashToRoute(e);this.currentRoute=t;const s=this.routeToKey(t),n=this.routes.get(s);if(n)n();else{console.warn(`No handler found for route: ${s}`);const i=`${t.dyad}:home`,o=this.routes.get(i);o&&o()}}destroy(){window.removeEventListener("hashchange",this.handleHashChange),window.removeEventListener("load",this.handleHashChange)}}const c={privacy:{onDeviceProcessing:"All processing happens on your device. Nothing is sent to our servers.",photosStayPrivate:"Photos stay private and are analyzed on your device only.",recordingsNeverLeave:"Your recordings never leave your device.",dataStaysLocal:"Photos and data stay on your device. No cloud storage."},empty:{noSessionsYet:"No sessions yet. Start tracking to see your history here."},buttons:{cancel:"Cancel",saveMeal:"Save Meal",analyze:"Analyze",uploadVoice:"Upload Voice",uploadVideo:"Upload Video",addText:"Add Text",snapMeal:"Snap Meal",askQuestion:"Ask a Question",logMeal:"Log Meal",viewPatterns:"View Patterns",history:"History",gallery:"Gallery",settings:"Settings"},forms:{trigger:"Trigger",duration:"Duration (minutes)",coRegulation:"Co-regulation strategies",notes:"Notes (optional)",environmentNoise:"Environment noise"},placeholders:{selectTrigger:"—",processing:"Processing..."},intensity:{mild:"1 - Mild",extreme:"10 - Extreme"},tabs:{recordSession:"Record Session",history:"History"},coRegulation:[{value:"hold",label:"Hold"},{value:"mirror",label:"Mirror"},{value:"label",label:"Label"},{value:"breathe",label:"Breathe"},{value:"safe_space",label:"Safe Space"},{value:"low_stimulus",label:"Low Stimulus"}],triggers:["transition","frustration","limit","separation","unknown"],sections:{howIntense:"How intense is this moment?",howWouldYouLike:"How would you like to share?",howWasMeal:"How was this meal?",whatWouldYouLike:"What would you like to do?",quickActions:"Quick Actions"},descriptions:{recordOrUpload:"Record or upload audio",recordOrUploadVideo:"Record or upload video",describeWhatHappened:"Describe what happened",takePhotoOfMeal:"Take a photo of the meal",getInsightsAboutFeeding:"Get insights about feeding",selectRating:"Select a rating"},app:{tantrumTranslator:"Tantrum Translator",mealMoodCompanion:"Meal Mood Companion",understandBeneathSurface:"Understand what's happening beneath the surface",trackEatingPatterns:"Track and understand your child's eating patterns"}};class j{container;router;intensitySlider=null;constructor(e,t){this.container=e,this.router=t}render(){this.container.innerHTML=`
       <div class="screen tantrum-home">
         <header class="screen-header">
           <h1>😤 ${c.app.tantrumTranslator}</h1>
@@ -312,12 +312,12 @@
             <p>Most frequent trigger: ${n[0]}</p>
           </div>
         </div>
-      `);const i=this.sessions.length,o=this.sessions.filter(h=>h.hasAudio).length,a=this.sessions.filter(h=>h.hasVideo).length,d=this.sessions.filter(h=>h.hasAudio&&h.hasVideo).length,k=o/i*100,w=a/i*100,l=(o+a-d)/i*100;return e.push(`
+      `);const i=this.sessions.length,o=this.sessions.filter(h=>h.hasAudio).length,a=this.sessions.filter(h=>h.hasVideo).length,l=this.sessions.filter(h=>h.hasAudio&&h.hasVideo).length,w=o/i*100,k=a/i*100,d=(o+a-l)/i*100;return e.push(`
       <div class="insight-item">
         <div class="insight-icon">🔊</div>
         <div class="insight-content">
           <h4>Environment Noise</h4>
-          <p>Audio noise: ${k.toFixed(1)}%, Video noise: ${w.toFixed(1)}%, Combined noise: ${l.toFixed(1)}%</p>
+          <p>Audio noise: ${w.toFixed(1)}%, Video noise: ${k.toFixed(1)}%, Combined noise: ${d.toFixed(1)}%</p>
         </div>
       </div>
     `),e.join("")}renderSessions(){return this.sessions.length===0?`
@@ -340,7 +340,7 @@
             ${o?`<div class="session-notes">${o}</div>`:""}
           </div>
         </div>
-      `}).join("")}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const t=this.container.querySelector('[data-action="export"]');t&&t.addEventListener("click",()=>{this.handleExport()});const s=this.container.querySelector('[data-action="new-session"]');s&&s.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const n=this.container.querySelector('[data-action="clear-all"]');n&&n.addEventListener("click",()=>{this.handleClearAll()}),this.container.querySelectorAll(".delete-btn").forEach(o=>{o.addEventListener("click",a=>{a.stopPropagation();const d=parseInt(a.currentTarget.dataset.index||"0");this.handleDeleteSession(d)})})}handleExport(){const e={sessions:this.sessions,summary:{totalSessions:this.sessions.length,averageIntensity:this.getAverageIntensity(),patternsCount:this.getPatternsCount(),exportDate:new Date().toISOString()}},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),s=URL.createObjectURL(t),n=document.createElement("a");n.href=s,n.download=`tantrum-history-${Date.now()}.json`,n.click(),URL.revokeObjectURL(s)}handleClearAll(){confirm("Are you sure you want to delete all tantrum session data? This cannot be undone.")&&(localStorage.removeItem("tantrum_history"),this.sessions=[],this.render())}handleDeleteSession(e){confirm("Delete this session?")&&(this.sessions.splice(e,1),localStorage.setItem("tantrum_history",JSON.stringify(this.sessions)),this.render())}destroy(){}}class G{container;router;constructor(e,t){this.container=e,this.router=t}render(){this.container.innerHTML=`
+      `}).join("")}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const t=this.container.querySelector('[data-action="export"]');t&&t.addEventListener("click",()=>{this.handleExport()});const s=this.container.querySelector('[data-action="new-session"]');s&&s.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const n=this.container.querySelector('[data-action="clear-all"]');n&&n.addEventListener("click",()=>{this.handleClearAll()}),this.container.querySelectorAll(".delete-btn").forEach(o=>{o.addEventListener("click",a=>{a.stopPropagation();const l=parseInt(a.currentTarget.dataset.index||"0");this.handleDeleteSession(l)})})}handleExport(){const e={sessions:this.sessions,summary:{totalSessions:this.sessions.length,averageIntensity:this.getAverageIntensity(),patternsCount:this.getPatternsCount(),exportDate:new Date().toISOString()}},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),s=URL.createObjectURL(t),n=document.createElement("a");n.href=s,n.download=`tantrum-history-${Date.now()}.json`,n.click(),URL.revokeObjectURL(s)}handleClearAll(){confirm("Are you sure you want to delete all tantrum session data? This cannot be undone.")&&(localStorage.removeItem("tantrum_history"),this.sessions=[],this.render())}handleDeleteSession(e){confirm("Delete this session?")&&(this.sessions.splice(e,1),localStorage.setItem("tantrum_history",JSON.stringify(this.sessions)),this.render())}destroy(){}}class G{container;router;constructor(e,t){this.container=e,this.router=t}render(){this.container.innerHTML=`
       <div class="screen tantrum-settings">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
@@ -504,7 +504,7 @@
           <button class="nav-btn" data-screen="settings">⚙️ ${c.buttons.settings}</button>
         </nav>
       </div>
-    `,this.bindEvents()}bindEvents(){this.container.querySelectorAll(".star-btn").forEach(i=>{i.addEventListener("click",o=>{const a=parseInt(o.currentTarget.dataset.rating||"0");this.handleRatingChange(a)})}),this.container.querySelectorAll(".action-btn").forEach(i=>{i.addEventListener("click",o=>{const a=o.currentTarget.dataset.action||"";this.handleAction(a)})}),this.container.querySelectorAll(".quick-btn").forEach(i=>{i.addEventListener("click",o=>{const a=o.currentTarget.dataset.action||"";this.handleQuickAction(a)})}),this.container.querySelectorAll(".nav-btn").forEach(i=>{i.addEventListener("click",o=>{const a=o.currentTarget.dataset.screen;this.router.navigate({dyad:"meal",screen:a})})})}handleRatingChange(e){this.currentRating=e,this.container.querySelectorAll(".star-btn").forEach((n,i)=>{const o=n;i<e?(o.textContent="⭐",o.classList.add("active")):(o.textContent="☆",o.classList.remove("active"))});const s=this.container.querySelector("#rating-text");if(s){const n=["","Poor","Fair","Good","Very Good","Excellent"];s.textContent=n[e]||"Select a rating"}}handleAction(e){switch(e){case"snap":this.router.navigate({dyad:"meal",screen:"meal-logging",params:{action:e,rating:this.currentRating.toString()}});break;case"question":this.router.navigate({dyad:"meal",screen:"insights",params:{action:e,rating:this.currentRating.toString()}});break}}handleQuickAction(e){switch(e){case"log-meal":this.router.navigate({dyad:"meal",screen:"meal-logging",params:{action:"log",rating:this.currentRating.toString()}});break;case"view-patterns":this.router.navigate({dyad:"meal",screen:"insights"});break}}destroy(){}}class Y{container;router;action;rating;constructor(e,t,s,n){this.container=e,this.router=t,this.action=s,this.rating=n}render(){const e=this.getActionConfig();this.container.innerHTML=`
+    `,this.bindEvents()}bindEvents(){this.container.querySelectorAll(".star-btn").forEach(i=>{i.addEventListener("click",o=>{const a=parseInt(o.currentTarget.dataset.rating||"0");this.handleRatingChange(a)})}),this.container.querySelectorAll(".action-btn").forEach(i=>{i.addEventListener("click",o=>{const a=o.currentTarget.dataset.action||"";this.handleAction(a)})}),this.container.querySelectorAll(".quick-btn").forEach(i=>{i.addEventListener("click",o=>{const a=o.currentTarget.dataset.action||"";this.handleQuickAction(a)})}),this.container.querySelectorAll(".nav-btn").forEach(i=>{i.addEventListener("click",o=>{const a=o.currentTarget.dataset.screen;this.router.navigate({dyad:"meal",screen:a})})})}handleRatingChange(e){this.currentRating=e,this.container.querySelectorAll(".star-btn").forEach((n,i)=>{const o=n;i<e?(o.textContent="⭐",o.classList.add("active")):(o.textContent="☆",o.classList.remove("active"))});const s=this.container.querySelector("#rating-text");if(s){const n=["","Poor","Fair","Good","Very Good","Excellent"];s.textContent=n[e]||"Select a rating"}}handleAction(e){switch(e){case"snap":this.router.navigate({dyad:"meal",screen:"meal-logging",params:{action:e,rating:this.currentRating.toString()}});break;case"question":this.router.navigate({dyad:"meal",screen:"insights",params:{action:e,rating:this.currentRating.toString(),mode:"question"}});break}}handleQuickAction(e){switch(e){case"log-meal":this.router.navigate({dyad:"meal",screen:"meal-logging",params:{action:"log",rating:this.currentRating.toString()}});break;case"view-patterns":this.router.navigate({dyad:"meal",screen:"insights"});break}}destroy(){}}class Y{container;router;action;rating;constructor(e,t,s,n){this.container=e,this.router=t,this.action=s,this.rating=n}render(){const e=this.getActionConfig();this.container.innerHTML=`
       <div class="screen meal-logging">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
@@ -577,82 +577,20 @@
           <button class="btn primary" data-action="save" disabled>${c.buttons.saveMeal}</button>
         </nav>
       </div>
-    `,this.bindEvents()}getActionConfig(){switch(this.action){case"snap":return{title:"📷 Snap Meal",icon:"📷",description:"Take a photo of the meal",buttonText:"Take Photo"};case"log":return{title:"📝 Log Meal",icon:"📝",description:"Log meal details manually",buttonText:"Start Logging"};default:return{title:"Meal Logging",icon:"🍽️",description:"Log your meal details",buttonText:"Start"}}}getRatingText(){const e=parseInt(this.rating)||0;return["","Poor","Fair","Good","Very Good","Excellent"][e]||"No rating"}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const t=this.container.querySelector(".capture-btn");t&&t.addEventListener("click",()=>{this.handleCapture()});const s=this.container.querySelector(".upload-btn");s&&s.addEventListener("click",()=>{this.handleUpload()});const n=this.container.querySelector('[data-action="cancel"]');n&&n.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const i=this.container.querySelector('[data-action="save"]');i&&i.addEventListener("click",()=>{this.handleSave()}),this.container.querySelectorAll(".form-input, .form-select, .form-textarea").forEach(a=>{a.addEventListener("input",()=>{this.validateForm()})})}handleCapture(){console.log(`Capturing meal photo with rating ${this.rating}`),this.enableSaveButton()}handleUpload(){console.log("Uploading meal photo"),this.enableSaveButton()}validateForm(){const e=this.container.querySelector("#meal-type")?.value,t=this.container.querySelector("#food-items")?.value,s=e&&t.trim(),n=this.container.querySelector('[data-action="save"]');n&&(n.disabled=!s)}enableSaveButton(){const e=this.container.querySelector('[data-action="save"]');e&&(e.disabled=!1)}handleSave(){console.log("Saving meal log"),this.router.navigate({dyad:"meal",screen:"insights",params:{action:"saved",rating:this.rating}})}destroy(){}}class J{container;router;rating;hasImage;dietaryDiversity;clutterScore;plateCoverage;mealMood=0;adjustedMood=0;currentTip="";currentBadge="";tipsData=null;constructor(e,t,s,n,i,o,a){this.container=e,this.router=t,this.rating=s,this.hasImage=n==="true",this.dietaryDiversity=parseFloat(i),this.clutterScore=parseFloat(o),this.plateCoverage=parseFloat(a)}async render(){await this.loadTipsData(),this.calculateMealMood(),this.container.innerHTML=`
+    `,this.bindEvents()}getActionConfig(){switch(this.action){case"snap":return{title:"📷 Snap Meal",icon:"📷",description:"Take a photo of the meal",buttonText:"Take Photo"};case"log":return{title:"📝 Log Meal",icon:"📝",description:"Log meal details manually",buttonText:"Start Logging"};default:return{title:"Meal Logging",icon:"🍽️",description:"Log your meal details",buttonText:"Start"}}}getRatingText(){const e=parseInt(this.rating)||0;return["","Poor","Fair","Good","Very Good","Excellent"][e]||"No rating"}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const t=this.container.querySelector(".capture-btn");t&&t.addEventListener("click",()=>{this.handleCapture()});const s=this.container.querySelector(".upload-btn");s&&s.addEventListener("click",()=>{this.handleUpload()});const n=this.container.querySelector('[data-action="cancel"]');n&&n.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const i=this.container.querySelector('[data-action="save"]');i&&i.addEventListener("click",()=>{this.handleSave()}),this.container.querySelectorAll(".form-input, .form-select, .form-textarea").forEach(a=>{a.addEventListener("input",()=>{this.validateForm()})})}handleCapture(){const e=document.createElement("input");e.type="file",e.accept="image/*",e.capture="environment",e.addEventListener("change",t=>{const s=t.target.files?.[0];s&&this.handleImageSelected(s)}),e.click()}handleUpload(){const e=document.createElement("input");e.type="file",e.accept="image/*",e.addEventListener("change",t=>{const s=t.target.files?.[0];s&&this.handleImageSelected(s)}),e.click()}handleImageSelected(e){const t=new FileReader;t.onload=s=>{const n=s.target?.result;this.displayImage(n),this.enableSaveButton()},t.readAsDataURL(e)}displayImage(e){const t=this.container.querySelector(".capture-area");if(t){t.innerHTML=`
+        <div class="captured-image">
+          <img src="${e}" alt="Captured meal" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+          <button class="btn secondary retake-btn" data-action="retake">🔄 Retake Photo</button>
+        </div>
+      `;const s=t.querySelector(".retake-btn");s&&s.addEventListener("click",()=>{this.render()})}}validateForm(){const e=this.container.querySelector("#meal-type")?.value,t=this.container.querySelector("#food-items")?.value,s=e&&t.trim(),n=this.container.querySelector('[data-action="save"]');n&&(n.disabled=!s)}enableSaveButton(){const e=this.container.querySelector('[data-action="save"]');e&&(e.disabled=!1)}handleSave(){console.log("Saving meal log"),this.router.navigate({dyad:"meal",screen:"insights",params:{action:"saved",rating:this.rating}})}destroy(){}}class Q{container;router;rating;hasImage;dietaryDiversity;clutterScore;plateCoverage;mealMood=0;adjustedMood=0;currentTip="";currentBadge="";tipsData=null;mode="patterns";constructor(e,t,s,n,i,o,a,l){this.container=e,this.router=t,this.rating=s,this.hasImage=n==="true",this.dietaryDiversity=parseFloat(i),this.clutterScore=parseFloat(o),this.plateCoverage=parseFloat(a),this.mode=l||"patterns"}async render(){await this.loadTipsData(),this.calculateMealMood();const e=this.mode==="question";this.container.innerHTML=`
       <div class="screen meal-insights">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
-          <h1>📊 Meal Insights</h1>
+          <h1>${e?"🎤 Ask Question":"📊 Meal Insights"}</h1>
         </header>
 
         <main class="screen-content">
-          <section class="mood-section">
-            <h3>Meal Mood Score</h3>
-            <div class="mood-display">
-              <div class="mood-score">
-                <div class="score-circle">
-                  <span class="score-value" id="mood-score">${this.adjustedMood}</span>
-                  <span class="score-label">/ 100</span>
-                </div>
-              </div>
-              <div class="mood-description" id="mood-description">
-                ${this.getMoodDescription()}
-              </div>
-            </div>
-          </section>
-
-          <section class="analysis-section">
-            <h3>Image Analysis</h3>
-            <div class="analysis-grid">
-              <div class="analysis-card">
-                <div class="analysis-icon">🌈</div>
-                <h4>Dietary Diversity</h4>
-                <div class="analysis-value">${(this.dietaryDiversity*100).toFixed(0)}%</div>
-                <div class="analysis-bar">
-                  <div class="bar-fill" style="width: ${this.dietaryDiversity*100}%"></div>
-                </div>
-              </div>
-              
-              <div class="analysis-card">
-                <div class="analysis-icon">🎯</div>
-                <h4>Clutter Score</h4>
-                <div class="analysis-value">${(this.clutterScore*100).toFixed(0)}%</div>
-                <div class="analysis-bar">
-                  <div class="bar-fill" style="width: ${this.clutterScore*100}%"></div>
-                </div>
-              </div>
-              
-              <div class="analysis-card">
-                <div class="analysis-icon">🍽️</div>
-                <h4>Plate Coverage</h4>
-                <div class="analysis-value">${(this.plateCoverage*100).toFixed(0)}%</div>
-                <div class="analysis-bar">
-                  <div class="bar-fill" style="width: ${this.plateCoverage*100}%"></div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="tip-section">
-            <h3>Personalized Tip</h3>
-            <div class="tip-card">
-              <div class="tip-content" id="tip-content">
-                ${this.currentTip}
-              </div>
-            </div>
-          </section>
-
-          <section class="badge-section" id="badge-section" style="display: none;">
-            <h3>Meal Achievement</h3>
-            <div class="badge-card">
-              <div class="badge-content" id="badge-content">
-                <!-- Badge will be inserted here -->
-              </div>
-            </div>
-          </section>
-
-          <section class="privacy-notice">
-            <p>🔒 Analysis completed on your device. No data was sent to servers.</p>
-          </section>
+          ${e?this.renderQuestionMode():this.renderPatternsMode()}
         </main>
 
         <nav class="screen-nav">
@@ -660,12 +598,188 @@
           <button class="btn primary" data-action="export">📤 Export Results</button>
         </nav>
       </div>
-    `,this.bindEvents(),this.selectTip(),this.checkForBadge()}async loadTipsData(){try{const e=await fetch("/scoring/meal/tips.json");this.tipsData=await e.json()}catch(e){console.error("Failed to load tips data:",e),this.tipsData={tips:{},badges:{},mood_adjustments:{}}}}calculateMealMood(){this.mealMood=parseInt(this.rating)*20;const e=(this.dietaryDiversity-.5)*10,t=(this.clutterScore-.5)*10;this.adjustedMood=Math.max(0,Math.min(100,this.mealMood+e-t))}getMoodDescription(){return this.adjustedMood>=80?"Excellent! The child is very excited about this meal.":this.adjustedMood>=60?"Good! The child shows positive interest in the meal.":this.adjustedMood>=40?"Moderate. The child is somewhat interested in the meal.":this.adjustedMood>=20?"Low. The child shows minimal interest in the meal.":"Very low. The child may not be interested in this meal."}selectTip(){if(!this.tipsData)return;let e="mood",t=this.getLevel(this.adjustedMood/100);this.dietaryDiversity<.3?(e="diversity",t="low"):this.clutterScore>.7?(e="clutter",t="high"):this.plateCoverage<.3?(e="coverage",t="low"):this.plateCoverage>.8&&(e="coverage",t="high");const s=this.tipsData.tips[e]?.[t]||this.tipsData.tips.mood?.[t]||["Great meal! Keep up the good work."];this.currentTip=s[Math.floor(Math.random()*s.length)]}getLevel(e){return e<.33?"low":e<.66?"medium":"high"}checkForBadge(){this.tipsData&&(this.dietaryDiversity>.7?this.showBadge(this.tipsData.badges.diversity_champion):this.plateCoverage>=.4&&this.plateCoverage<=.7?this.showBadge(this.tipsData.badges.portion_perfect):this.adjustedMood>80&&this.showBadge(this.tipsData.badges.mood_booster))}showBadge(e){this.currentBadge=e.name;const t=this.container.querySelector("#badge-section"),s=this.container.querySelector("#badge-content");t&&s&&(t.style.display="block",s.innerHTML=`
+    `,this.bindEvents(),e||(this.selectTip(),this.checkForBadge())}renderQuestionMode(){return`
+      <section class="question-section">
+        <h3>Ask About Feeding Patterns</h3>
+        <div class="question-form">
+          <div class="form-group">
+            <label>Your Question</label>
+            <textarea class="form-textarea" id="question-input" placeholder="e.g., Why does my child refuse vegetables? How can I make mealtime less stressful? What are good portion sizes for a 3-year-old?"></textarea>
+          </div>
+          
+          <div class="question-suggestions">
+            <h4>Suggested Questions:</h4>
+            <div class="suggestion-buttons">
+              <button class="btn secondary suggestion-btn" data-question="How can I encourage my child to try new foods?">Try new foods</button>
+              <button class="btn secondary suggestion-btn" data-question="What are healthy snack alternatives?">Healthy snacks</button>
+              <button class="btn secondary suggestion-btn" data-question="How do I handle picky eating?">Picky eating</button>
+              <button class="btn secondary suggestion-btn" data-question="What's a good meal schedule for toddlers?">Meal schedule</button>
+            </div>
+          </div>
+          
+          <button class="btn primary ask-btn" data-action="ask-question">🤖 Ask AI Assistant</button>
+        </div>
+      </section>
+
+      <section class="answer-section" id="answer-section" style="display: none;">
+        <h3>AI Response</h3>
+        <div class="answer-card">
+          <div class="answer-content" id="answer-content">
+            <!-- AI response will be inserted here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="privacy-notice">
+        <p>🔒 Your question and response are processed locally. No data is sent to external servers.</p>
+      </section>
+    `}renderPatternsMode(){return`
+      <section class="mood-section">
+        <h3>Meal Mood Score</h3>
+        <div class="mood-display">
+          <div class="mood-score">
+            <div class="score-circle">
+              <span class="score-value" id="mood-score">${this.adjustedMood}</span>
+              <span class="score-label">/ 100</span>
+            </div>
+          </div>
+          <div class="mood-description" id="mood-description">
+            ${this.getMoodDescription()}
+          </div>
+        </div>
+      </section>
+
+      <section class="analysis-section">
+        <h3>Image Analysis</h3>
+        <div class="analysis-grid">
+          <div class="analysis-card">
+            <div class="analysis-icon">🌈</div>
+            <h4>Dietary Diversity</h4>
+            <div class="analysis-value">${(this.dietaryDiversity*100).toFixed(0)}%</div>
+            <div class="analysis-bar">
+              <div class="bar-fill" style="width: ${this.dietaryDiversity*100}%"></div>
+            </div>
+          </div>
+          
+          <div class="analysis-card">
+            <div class="analysis-icon">🎯</div>
+            <h4>Clutter Score</h4>
+            <div class="analysis-value">${(this.clutterScore*100).toFixed(0)}%</div>
+            <div class="analysis-bar">
+              <div class="bar-fill" style="width: ${this.clutterScore*100}%"></div>
+            </div>
+          </div>
+          
+          <div class="analysis-card">
+            <div class="analysis-icon">🍽️</div>
+            <h4>Plate Coverage</h4>
+            <div class="analysis-value">${(this.plateCoverage*100).toFixed(0)}%</div>
+            <div class="analysis-bar">
+              <div class="bar-fill" style="width: ${this.plateCoverage*100}%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tip-section">
+        <h3>Personalized Tip</h3>
+        <div class="tip-card">
+          <div class="tip-content" id="tip-content">
+            ${this.currentTip}
+          </div>
+        </div>
+      </section>
+
+      <section class="badge-section" id="badge-section" style="display: none;">
+        <h3>Meal Achievement</h3>
+        <div class="badge-card">
+          <div class="badge-content" id="badge-content">
+            <!-- Badge will be inserted here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="privacy-notice">
+        <p>🔒 Analysis completed on your device. No data was sent to servers.</p>
+      </section>
+    `}async loadTipsData(){try{const e=await fetch("/scoring/meal/tips.json");this.tipsData=await e.json()}catch(e){console.error("Failed to load tips data:",e),this.tipsData={tips:{},badges:{},mood_adjustments:{}}}}calculateMealMood(){this.mealMood=parseInt(this.rating)*20;const e=(this.dietaryDiversity-.5)*10,t=(this.clutterScore-.5)*10;this.adjustedMood=Math.max(0,Math.min(100,this.mealMood+e-t))}getMoodDescription(){return this.adjustedMood>=80?"Excellent! The child is very excited about this meal.":this.adjustedMood>=60?"Good! The child shows positive interest in the meal.":this.adjustedMood>=40?"Moderate. The child is somewhat interested in the meal.":this.adjustedMood>=20?"Low. The child shows minimal interest in the meal.":"Very low. The child may not be interested in this meal."}selectTip(){if(!this.tipsData)return;let e="mood",t=this.getLevel(this.adjustedMood/100);this.dietaryDiversity<.3?(e="diversity",t="low"):this.clutterScore>.7?(e="clutter",t="high"):this.plateCoverage<.3?(e="coverage",t="low"):this.plateCoverage>.8&&(e="coverage",t="high");const s=this.tipsData.tips[e]?.[t]||this.tipsData.tips.mood?.[t]||["Great meal! Keep up the good work."];this.currentTip=s[Math.floor(Math.random()*s.length)]}getLevel(e){return e<.33?"low":e<.66?"medium":"high"}checkForBadge(){this.tipsData&&(this.dietaryDiversity>.7?this.showBadge(this.tipsData.badges.diversity_champion):this.plateCoverage>=.4&&this.plateCoverage<=.7?this.showBadge(this.tipsData.badges.portion_perfect):this.adjustedMood>80&&this.showBadge(this.tipsData.badges.mood_booster))}showBadge(e){this.currentBadge=e.name;const t=this.container.querySelector("#badge-section"),s=this.container.querySelector("#badge-content");t&&s&&(t.style.display="block",s.innerHTML=`
         <div class="badge-display">
           <div class="badge-icon">${e.name}</div>
           <div class="badge-description">${e.description}</div>
         </div>
-      `)}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const t=this.container.querySelector('[data-action="save"]');t&&t.addEventListener("click",()=>{this.handleSave()});const s=this.container.querySelector('[data-action="export"]');s&&s.addEventListener("click",()=>{this.handleExport()})}async handleSave(){const e=this.prepareSessionData();this.saveToHistory(e),this.router.navigate({dyad:"meal",screen:"gallery"})}async handleExport(){const e={dyad:"meal",timestamp:new Date().toISOString(),rating:parseInt(this.rating),metrics:{meal_mood:this.adjustedMood},media_summaries:{image:{dietary_diversity:this.dietaryDiversity,clutter_score:this.clutterScore,plate_coverage:this.plateCoverage}},tip:this.currentTip,badge:this.currentBadge},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),s=URL.createObjectURL(t),n=document.createElement("a");n.href=s,n.download=`meal-session-${Date.now()}.json`,n.click(),URL.revokeObjectURL(s)}prepareSessionData(){return{timestamp:new Date().toISOString(),rating:parseInt(this.rating),mealMood:this.adjustedMood,hasImage:this.hasImage,dietaryDiversity:this.dietaryDiversity,clutterScore:this.clutterScore,plateCoverage:this.plateCoverage,tip:this.currentTip,badge:this.currentBadge}}saveToHistory(e){const t="meal_history",s=JSON.parse(localStorage.getItem(t)||"[]");s.unshift(e),s.length>30&&s.splice(30),localStorage.setItem(t,JSON.stringify(s))}destroy(){}}class K{container;router;sessions=[];constructor(e,t){this.container=e,this.router=t}render(){this.loadSessions(),this.container.innerHTML=`
+      `)}bindEvents(){const e=this.container.querySelector(".back-btn");if(e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})}),this.mode==="question"){this.container.querySelectorAll(".suggestion-btn").forEach(o=>{o.addEventListener("click",a=>{const l=a.currentTarget.dataset.question||"",w=this.container.querySelector("#question-input");w&&(w.value=l)})});const i=this.container.querySelector(".ask-btn");i&&i.addEventListener("click",()=>{this.handleAskQuestion()})}const t=this.container.querySelector('[data-action="save"]');t&&t.addEventListener("click",()=>{this.handleSave()});const s=this.container.querySelector('[data-action="export"]');s&&s.addEventListener("click",()=>{this.handleExport()})}async handleAskQuestion(){const t=this.container.querySelector("#question-input")?.value.trim();if(!t){alert("Please enter a question first.");return}const s=this.container.querySelector(".ask-btn"),n=s.textContent;s.textContent="🤖 Thinking...",s.disabled=!0;try{const i=await this.generateAIResponse(t);this.displayAnswer(i)}catch(i){console.error("Error generating response:",i),alert("Sorry, there was an error generating the response. Please try again.")}finally{s.textContent=n,s.disabled=!1}}async generateAIResponse(e){await new Promise(s=>setTimeout(s,2e3));const t=e.toLowerCase();return t.includes("vegetable")||t.includes("veggie")?`Great question! Here are some tips for encouraging vegetable consumption:
+
+1. **Lead by example** - Eat vegetables enthusiastically in front of your child
+2. **Make it fun** - Try "rainbow plates" with colorful vegetables
+3. **Involve them** - Let your child help choose and prepare vegetables
+4. **Start small** - Begin with tiny portions and gradually increase
+5. **Be patient** - It can take 10-15 exposures before a child accepts a new food
+
+Remember, every child is different, and it's normal for preferences to change over time.`:t.includes("snack")||t.includes("healthy")?`Here are some nutritious snack ideas for toddlers:
+
+**Fruits & Vegetables:**
+• Apple slices with peanut butter
+• Carrot sticks with hummus
+• Banana with yogurt
+
+**Protein-rich:**
+• Hard-boiled eggs
+• Cheese cubes
+• Greek yogurt
+
+**Grains:**
+• Whole grain crackers
+• Oatmeal with berries
+• Rice cakes
+
+**Avoid:** Processed snacks, sugary drinks, and large portions that might spoil their appetite for meals.`:t.includes("picky")||t.includes("refuse")?`Picky eating is very common and usually temporary. Here's how to handle it:
+
+**Stay Calm:** Don't make mealtime a power struggle
+**Offer Choices:** "Would you like carrots or broccoli?"
+**Keep Trying:** Continue offering rejected foods in different ways
+**Set Limits:** "This is what's for dinner" (no short-order cooking)
+**Praise Efforts:** Celebrate when they try new foods
+**Be Patient:** This phase usually passes with time
+
+Remember: It's your job to offer healthy foods, but your child decides how much to eat.`:t.includes("schedule")||t.includes("meal time")?`A consistent meal schedule helps children develop healthy eating habits:
+
+**Typical Toddler Schedule:**
+• **Breakfast:** 7-8 AM
+• **Morning Snack:** 9-10 AM
+• **Lunch:** 11:30 AM - 12:30 PM
+• **Afternoon Snack:** 2-3 PM
+• **Dinner:** 5-6 PM
+
+**Tips:**
+• Keep meals 2-3 hours apart
+• Limit snacks to 30 minutes before meals
+• Offer water between meals
+• Be consistent with timing
+• Allow 20-30 minutes for meals
+
+Adjust timing based on your family's schedule and your child's hunger cues.`:`Thank you for your question about feeding! Here are some general tips for healthy eating habits:
+
+**Create a Positive Environment:**
+• Eat together as a family when possible
+• Make mealtime pleasant and stress-free
+• Avoid using food as rewards or punishments
+
+**Offer Variety:**
+• Include foods from all food groups
+• Present foods in different ways
+• Let your child explore new textures and flavors
+
+**Trust Your Child:**
+• They know when they're hungry or full
+• Don't force them to eat
+• Offer appropriate portion sizes
+
+If you have specific concerns about your child's eating, consider consulting with a pediatrician or registered dietitian.`}displayAnswer(e){const t=this.container.querySelector("#answer-section"),s=this.container.querySelector("#answer-content");if(t&&s){t.style.display="block",s.innerHTML=`
+        <div class="answer-text">
+          ${e.replace(/\n/g,"<br>")}
+        </div>
+        <button class="btn secondary new-question-btn" data-action="new-question">Ask Another Question</button>
+      `;const n=s.querySelector(".new-question-btn");n&&n.addEventListener("click",()=>{t.style.display="none";const i=this.container.querySelector("#question-input");i&&(i.value="",i.focus())}),t.scrollIntoView({behavior:"smooth"})}}async handleSave(){const e=this.prepareSessionData();this.saveToHistory(e),this.router.navigate({dyad:"meal",screen:"gallery"})}async handleExport(){const e={dyad:"meal",timestamp:new Date().toISOString(),rating:parseInt(this.rating),metrics:{meal_mood:this.adjustedMood},media_summaries:{image:{dietary_diversity:this.dietaryDiversity,clutter_score:this.clutterScore,plate_coverage:this.plateCoverage}},tip:this.currentTip,badge:this.currentBadge},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),s=URL.createObjectURL(t),n=document.createElement("a");n.href=s,n.download=`meal-session-${Date.now()}.json`,n.click(),URL.revokeObjectURL(s)}prepareSessionData(){return{timestamp:new Date().toISOString(),rating:parseInt(this.rating),mealMood:this.adjustedMood,hasImage:this.hasImage,dietaryDiversity:this.dietaryDiversity,clutterScore:this.clutterScore,plateCoverage:this.plateCoverage,tip:this.currentTip,badge:this.currentBadge}}saveToHistory(e){const t="meal_history",s=JSON.parse(localStorage.getItem(t)||"[]");s.unshift(e),s.length>30&&s.splice(30),localStorage.setItem(t,JSON.stringify(s))}destroy(){}}class J{container;router;sessions=[];constructor(e,t){this.container=e,this.router=t}render(){this.loadSessions(),this.container.innerHTML=`
       <div class="screen meal-gallery">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
@@ -811,7 +925,7 @@
           </div>
           <button class="delete-btn" data-index="${t}">🗑️</button>
         </div>
-      `}).join("")}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const t=this.container.querySelector('[data-action="export"]');t&&t.addEventListener("click",()=>{this.handleExport()});const s=this.container.querySelector('[data-action="new-meal"]');s&&s.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const n=this.container.querySelector('[data-action="clear-all"]');n&&n.addEventListener("click",()=>{this.handleClearAll()}),this.container.querySelectorAll(".delete-btn").forEach(o=>{o.addEventListener("click",a=>{a.stopPropagation();const d=parseInt(a.currentTarget.dataset.index||"0");this.handleDeleteMeal(d)})})}handleExport(){const e={sessions:this.sessions,summary:{totalMeals:this.sessions.length,averageMood:this.getAverageMood(),averageRating:this.getAverageRating(),exportDate:new Date().toISOString()}},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),s=URL.createObjectURL(t),n=document.createElement("a");n.href=s,n.download=`meal-gallery-${Date.now()}.json`,n.click(),URL.revokeObjectURL(s)}handleClearAll(){confirm("Are you sure you want to delete all meal data? This cannot be undone.")&&(localStorage.removeItem("meal_history"),this.sessions=[],this.render())}handleDeleteMeal(e){confirm("Delete this meal?")&&(this.sessions.splice(e,1),localStorage.setItem("meal_history",JSON.stringify(this.sessions)),this.render())}destroy(){}}class Q{container;router;constructor(e,t){this.container=e,this.router=t}render(){this.container.innerHTML=`
+      `}).join("")}bindEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const t=this.container.querySelector('[data-action="export"]');t&&t.addEventListener("click",()=>{this.handleExport()});const s=this.container.querySelector('[data-action="new-meal"]');s&&s.addEventListener("click",()=>{this.router.navigate({dyad:"meal",screen:"home"})});const n=this.container.querySelector('[data-action="clear-all"]');n&&n.addEventListener("click",()=>{this.handleClearAll()}),this.container.querySelectorAll(".delete-btn").forEach(o=>{o.addEventListener("click",a=>{a.stopPropagation();const l=parseInt(a.currentTarget.dataset.index||"0");this.handleDeleteMeal(l)})})}handleExport(){const e={sessions:this.sessions,summary:{totalMeals:this.sessions.length,averageMood:this.getAverageMood(),averageRating:this.getAverageRating(),exportDate:new Date().toISOString()}},t=new Blob([JSON.stringify(e,null,2)],{type:"application/json"}),s=URL.createObjectURL(t),n=document.createElement("a");n.href=s,n.download=`meal-gallery-${Date.now()}.json`,n.click(),URL.revokeObjectURL(s)}handleClearAll(){confirm("Are you sure you want to delete all meal data? This cannot be undone.")&&(localStorage.removeItem("meal_history"),this.sessions=[],this.render())}handleDeleteMeal(e){confirm("Delete this meal?")&&(this.sessions.splice(e,1),localStorage.setItem("meal_history",JSON.stringify(this.sessions)),this.render())}destroy(){}}class K{container;router;constructor(e,t){this.container=e,this.router=t}render(){this.container.innerHTML=`
       <div class="screen meal-settings">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
@@ -946,7 +1060,7 @@
       background: linear-gradient(to right, #4CAF50 0%, #4CAF50 30%, #FF9800 30%, #FF9800 60%, #F44336 60%, #F44336 100%);
       outline: none;
       -webkit-appearance: none;
-    `,e.addEventListener("input",d),e.addEventListener("change",k);const v=document.createElement("style");v.textContent=`
+    `,e.addEventListener("input",l),e.addEventListener("change",w);const v=document.createElement("style");v.textContent=`
       .thermometer input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
@@ -973,7 +1087,7 @@
       font-size: 12px;
       color: #666;
       margin-top: 4px;
-    `;const p=document.createElement("span");p.textContent="1";const f=document.createElement("span");f.textContent="10",b.appendChild(p),b.appendChild(f),r.appendChild(b),y.appendChild(r),w()}function d(){const y=parseInt(e.value);y!==o&&(o=y,w(),i&&clearTimeout(i),i=window.setTimeout(()=>{n.forEach(x=>x(o))},150))}function k(){n.forEach(y=>y(o))}function w(){t.textContent=o.toString();const y=te.find(x=>o>=x.min&&o<=x.max);y?(s.textContent=y.label,s.style.color=y.color):s.textContent=""}function l(){return o}function h(y){const x=Math.max(1,Math.min(10,Math.round(y)));x!==o&&(o=x,e&&(e.value=o.toString()),w())}function u(y){n.push(y)}function m(){i&&clearTimeout(i),n=[],r&&r.parentNode&&r.parentNode.removeChild(r)}return{mount:a,getValue:l,setValue:h,onValueChange:u,destroy:m}}const $="tantrum_sessions",A="meal_sessions",ne="silli_meter_db",ie=2,I=14;class ae{db=null;useIndexedDB=!0;async init(){try{this.db=await this.openIndexedDB(),console.log("✅ Using IndexedDB for local storage")}catch(e){console.warn("⚠️ IndexedDB not available, falling back to localStorage:",e),this.useIndexedDB=!1}}openIndexedDB(){return new Promise((e,t)=>{const s=indexedDB.open(ne,ie);s.onerror=()=>t(s.error),s.onsuccess=()=>e(s.result),s.onupgradeneeded=n=>{const i=n.target.result;i.objectStoreNames.contains($)||i.createObjectStore($,{keyPath:"id"}).createIndex("ts","ts",{unique:!1}),i.objectStoreNames.contains(A)||i.createObjectStore(A,{keyPath:"id"}).createIndex("ts","ts",{unique:!1})}})}async saveSession(e){this.useIndexedDB&&this.db?await this.saveToIndexedDB(e,$):this.saveToLocalStorage(e,"tantrum_sessions")}async saveMealSession(e){this.useIndexedDB&&this.db?await this.saveToIndexedDB(e,A):this.saveToLocalStorage(e,"meal_sessions")}async saveToIndexedDB(e,t){return new Promise((s,n)=>{if(!this.db){n(new Error("IndexedDB not initialized"));return}const a=this.db.transaction([t],"readwrite").objectStore(t).add(e);a.onsuccess=()=>{this.cleanupOldSessions(t),s()},a.onerror=()=>n(a.error)})}saveToLocalStorage(e,t){const s=this.getSessionsFromLocalStorage(t);s.push(e),s.length>I&&s.splice(0,s.length-I),localStorage.setItem(t,JSON.stringify(s))}async getSessions(){return this.useIndexedDB&&this.db?this.getSessionsFromIndexedDB($):this.getSessionsFromLocalStorage("tantrum_sessions")}async getMealSessions(){return this.useIndexedDB&&this.db?this.getSessionsFromIndexedDB(A):this.getSessionsFromLocalStorage("meal_sessions")}async getSessionsFromIndexedDB(e){return new Promise((t,s)=>{if(!this.db){s(new Error("IndexedDB not initialized"));return}const a=this.db.transaction([e],"readonly").objectStore(e).index("ts").getAll();a.onsuccess=()=>{const d=a.result;d.sort((k,w)=>new Date(w.ts).getTime()-new Date(k.ts).getTime()),t(d.slice(0,I))},a.onerror=()=>s(a.error)})}getSessionsFromLocalStorage(e){try{const t=localStorage.getItem(e);if(!t)return[];const s=JSON.parse(t);return s.sort((n,i)=>new Date(i.ts).getTime()-new Date(n.ts).getTime()),s.slice(0,I)}catch(t){return console.warn("Error reading from localStorage:",t),[]}}async cleanupOldSessions(e){if(!this.db)return;const t=await this.getSessionsFromIndexedDB(e);if(t.length<=I)return;const n=this.db.transaction([e],"readwrite").objectStore(e),i=t.slice(I);for(const o of i)n.delete(o.id)}async clearAll(){if(this.useIndexedDB&&this.db){const e=this.db.transaction([$,A],"readwrite");e.objectStore($).clear(),e.objectStore(A).clear()}else localStorage.removeItem("tantrum_sessions"),localStorage.removeItem("meal_sessions")}async getStats(){const e=await this.getSessions();if(e.length===0)return{total:0,avg_intensity:0,most_common_trigger:null};const t=e.map(a=>a.intensity_1_10).filter(a=>a!==void 0),s=t.length>0?t.reduce((a,d)=>a+d,0)/t.length:0,i=e.map(a=>a.trigger).filter(a=>a!==void 0).reduce((a,d)=>(a[d]=(a[d]||0)+1,a),{}),o=Object.keys(i).length>0?Object.entries(i).reduce((a,d)=>a[1]>d[1]?a:d)[0]:null;return{total:e.length,avg_intensity:Math.round(s*10)/10,most_common_trigger:o}}async getMealStats(){const e=await this.getMealSessions();if(e.length===0)return{total:0,avg_rating:0,most_common_meal_type:null};const t=e.map(a=>a.rating).filter(a=>a!==void 0),s=t.length>0?t.reduce((a,d)=>a+d,0)/t.length:0,i=e.map(a=>a.meal_type).filter(a=>a!==void 0).reduce((a,d)=>(a[d]=(a[d]||0)+1,a),{}),o=Object.keys(i).length>0?Object.entries(i).reduce((a,d)=>a[1]>d[1]?a:d)[0]:null;return{total:e.length,avg_rating:Math.round(s*10)/10,most_common_meal_type:o}}}const q=new ae;q.init().catch(console.error);function oe(){let r,e=[];function t(l){l.innerHTML="",r=document.createElement("div"),r.className="history",r.style.cssText=`
+    `;const p=document.createElement("span");p.textContent="1";const f=document.createElement("span");f.textContent="10",b.appendChild(p),b.appendChild(f),r.appendChild(b),y.appendChild(r),k()}function l(){const y=parseInt(e.value);y!==o&&(o=y,k(),i&&clearTimeout(i),i=window.setTimeout(()=>{n.forEach(x=>x(o))},150))}function w(){n.forEach(y=>y(o))}function k(){t.textContent=o.toString();const y=te.find(x=>o>=x.min&&o<=x.max);y?(s.textContent=y.label,s.style.color=y.color):s.textContent=""}function d(){return o}function h(y){const x=Math.max(1,Math.min(10,Math.round(y)));x!==o&&(o=x,e&&(e.value=o.toString()),k())}function u(y){n.push(y)}function m(){i&&clearTimeout(i),n=[],r&&r.parentNode&&r.parentNode.removeChild(r)}return{mount:a,getValue:d,setValue:h,onValueChange:u,destroy:m}}const D="tantrum_sessions",I="meal_sessions",ne="silli_meter_db",ie=2,$=14;class ae{db=null;useIndexedDB=!0;async init(){try{this.db=await this.openIndexedDB(),console.log("✅ Using IndexedDB for local storage")}catch(e){console.warn("⚠️ IndexedDB not available, falling back to localStorage:",e),this.useIndexedDB=!1}}openIndexedDB(){return new Promise((e,t)=>{const s=indexedDB.open(ne,ie);s.onerror=()=>t(s.error),s.onsuccess=()=>e(s.result),s.onupgradeneeded=n=>{const i=n.target.result;i.objectStoreNames.contains(D)||i.createObjectStore(D,{keyPath:"id"}).createIndex("ts","ts",{unique:!1}),i.objectStoreNames.contains(I)||i.createObjectStore(I,{keyPath:"id"}).createIndex("ts","ts",{unique:!1})}})}async saveSession(e){this.useIndexedDB&&this.db?await this.saveToIndexedDB(e,D):this.saveToLocalStorage(e,"tantrum_sessions")}async saveMealSession(e){this.useIndexedDB&&this.db?await this.saveToIndexedDB(e,I):this.saveToLocalStorage(e,"meal_sessions")}async saveToIndexedDB(e,t){return new Promise((s,n)=>{if(!this.db){n(new Error("IndexedDB not initialized"));return}const a=this.db.transaction([t],"readwrite").objectStore(t).add(e);a.onsuccess=()=>{this.cleanupOldSessions(t),s()},a.onerror=()=>n(a.error)})}saveToLocalStorage(e,t){const s=this.getSessionsFromLocalStorage(t);s.push(e),s.length>$&&s.splice(0,s.length-$),localStorage.setItem(t,JSON.stringify(s))}async getSessions(){return this.useIndexedDB&&this.db?this.getSessionsFromIndexedDB(D):this.getSessionsFromLocalStorage("tantrum_sessions")}async getMealSessions(){return this.useIndexedDB&&this.db?this.getSessionsFromIndexedDB(I):this.getSessionsFromLocalStorage("meal_sessions")}async getSessionsFromIndexedDB(e){return new Promise((t,s)=>{if(!this.db){s(new Error("IndexedDB not initialized"));return}const a=this.db.transaction([e],"readonly").objectStore(e).index("ts").getAll();a.onsuccess=()=>{const l=a.result;l.sort((w,k)=>new Date(k.ts).getTime()-new Date(w.ts).getTime()),t(l.slice(0,$))},a.onerror=()=>s(a.error)})}getSessionsFromLocalStorage(e){try{const t=localStorage.getItem(e);if(!t)return[];const s=JSON.parse(t);return s.sort((n,i)=>new Date(i.ts).getTime()-new Date(n.ts).getTime()),s.slice(0,$)}catch(t){return console.warn("Error reading from localStorage:",t),[]}}async cleanupOldSessions(e){if(!this.db)return;const t=await this.getSessionsFromIndexedDB(e);if(t.length<=$)return;const n=this.db.transaction([e],"readwrite").objectStore(e),i=t.slice($);for(const o of i)n.delete(o.id)}async clearAll(){if(this.useIndexedDB&&this.db){const e=this.db.transaction([D,I],"readwrite");e.objectStore(D).clear(),e.objectStore(I).clear()}else localStorage.removeItem("tantrum_sessions"),localStorage.removeItem("meal_sessions")}async getStats(){const e=await this.getSessions();if(e.length===0)return{total:0,avg_intensity:0,most_common_trigger:null};const t=e.map(a=>a.intensity_1_10).filter(a=>a!==void 0),s=t.length>0?t.reduce((a,l)=>a+l,0)/t.length:0,i=e.map(a=>a.trigger).filter(a=>a!==void 0).reduce((a,l)=>(a[l]=(a[l]||0)+1,a),{}),o=Object.keys(i).length>0?Object.entries(i).reduce((a,l)=>a[1]>l[1]?a:l)[0]:null;return{total:e.length,avg_intensity:Math.round(s*10)/10,most_common_trigger:o}}async getMealStats(){const e=await this.getMealSessions();if(e.length===0)return{total:0,avg_rating:0,most_common_meal_type:null};const t=e.map(a=>a.rating).filter(a=>a!==void 0),s=t.length>0?t.reduce((a,l)=>a+l,0)/t.length:0,i=e.map(a=>a.meal_type).filter(a=>a!==void 0).reduce((a,l)=>(a[l]=(a[l]||0)+1,a),{}),o=Object.keys(i).length>0?Object.entries(i).reduce((a,l)=>a[1]>l[1]?a:l)[0]:null;return{total:e.length,avg_rating:Math.round(s*10)/10,most_common_meal_type:o}}}const R=new ae;R.init().catch(console.error);function oe(){let r,e=[];function t(d){d.innerHTML="",r=document.createElement("div"),r.className="history",r.style.cssText=`
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -1000,7 +1114,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-    `,r.appendChild(m),l.appendChild(r),s()}async function s(){try{e=await q.getSessions(),n(),o()}catch(l){console.error("Error loading history:",l),a()}}function n(){const l=r.querySelector(".history-stats");if(!l)return;const h={total:e.length,avg_intensity:e.length>0?Math.round(e.reduce((u,m)=>u+(m.intensity_1_10||0),0)/e.length*10)/10:0,most_common_trigger:i()};l.innerHTML=`
+    `,r.appendChild(m),d.appendChild(r),s()}async function s(){try{e=await R.getSessions(),n(),o()}catch(d){console.error("Error loading history:",d),a()}}function n(){const d=r.querySelector(".history-stats");if(!d)return;const h={total:e.length,avg_intensity:e.length>0?Math.round(e.reduce((u,m)=>u+(m.intensity_1_10||0),0)/e.length*10)/10:0,most_common_trigger:i()};d.innerHTML=`
       <div style="flex: 1; text-align: center;">
         <div style="font-weight: bold; color: #2196F3;">${h.total}</div>
         <div style="font-size: 12px; color: #666;">Sessions</div>
@@ -1013,11 +1127,11 @@
         <div style="font-weight: bold; color: #4CAF50;">${h.most_common_trigger||"—"}</div>
         <div style="font-size: 12px; color: #666;">Top Trigger</div>
       </div>
-    `}function i(){const l=e.map(u=>u.trigger).filter(u=>u!==void 0);if(l.length===0)return null;const h=l.reduce((u,m)=>(u[m]=(u[m]||0)+1,u),{});return Object.entries(h).reduce((u,m)=>u[1]>m[1]?u:m)[0]}function o(){const l=r.querySelector(".history-sessions");if(l){if(e.length===0){l.innerHTML=`
+    `}function i(){const d=e.map(u=>u.trigger).filter(u=>u!==void 0);if(d.length===0)return null;const h=d.reduce((u,m)=>(u[m]=(u[m]||0)+1,u),{});return Object.entries(h).reduce((u,m)=>u[1]>m[1]?u:m)[0]}function o(){const d=r.querySelector(".history-sessions");if(d){if(e.length===0){d.innerHTML=`
         <div style="text-align: center; padding: 32px; color: #666; font-style: italic;">
           ${c.empty.noSessionsYet}
         </div>
-      `;return}l.innerHTML=e.map(h=>{const u=new Date(h.ts),m=k(u),y=h.intensity_1_10||0,x=h.escalation_index||0,C=y<=3?"#4CAF50":y<=6?"#FF9800":"#F44336",v=x<=.3?"#4CAF50":x<=.7?"#FF9800":"#F44336";return`
+      `;return}d.innerHTML=e.map(h=>{const u=new Date(h.ts),m=w(u),y=h.intensity_1_10||0,x=h.escalation_index||0,C=y<=3?"#4CAF50":y<=6?"#FF9800":"#F44336",v=x<=.3?"#4CAF50":x<=.7?"#FF9800":"#F44336";return`
         <div class="session-item" style="
           background: white;
           border-radius: 6px;
@@ -1026,7 +1140,7 @@
           box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         ">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-            <div style="font-weight: 600; color: #333;">${d(u)}</div>
+            <div style="font-weight: 600; color: #333;">${l(u)}</div>
             <div style="font-size: 12px; color: #666;">${m}</div>
           </div>
           
@@ -1091,11 +1205,11 @@
             </div>
           `:""}
         </div>
-      `}).join("")}}function a(){const l=r.querySelector(".history-sessions");l&&(l.innerHTML=`
+      `}).join("")}}function a(){const d=r.querySelector(".history-sessions");d&&(d.innerHTML=`
       <div style="text-align: center; padding: 32px; color: #f44336; font-style: italic;">
         Error loading history. Please try again.
       </div>
-    `)}function d(l){const u=Math.abs(new Date().getTime()-l.getTime()),m=Math.ceil(u/(1e3*60*60*24));return m===1?"Today":m===2?"Yesterday":m<=7?l.toLocaleDateString("en-US",{weekday:"short"}):l.toLocaleDateString("en-US",{month:"short",day:"numeric"})}function k(l){const u=new Date().getTime()-l.getTime(),m=Math.floor(u/(1e3*60)),y=Math.floor(u/(1e3*60*60)),x=Math.floor(u/(1e3*60*60*24));return m<1?"Just now":m<60?`${m}m ago`:y<24?`${y}h ago`:x<7?`${x}d ago`:l.toLocaleDateString("en-US",{month:"short",day:"numeric"})}function w(){r&&r.parentNode&&r.parentNode.removeChild(r)}return{mount:t,refresh:s,destroy:w}}const re=c.triggers,ce=c.coRegulation;function le(){let r,e,t,s,n,i,o,a,d,k,w,l={};function h(v){v.innerHTML="",r=S("div",{className:"form form--tantrum"});const b=document.createElement("div");b.style.cssText=`
+    `)}function l(d){const u=Math.abs(new Date().getTime()-d.getTime()),m=Math.ceil(u/(1e3*60*60*24));return m===1?"Today":m===2?"Yesterday":m<=7?d.toLocaleDateString("en-US",{weekday:"short"}):d.toLocaleDateString("en-US",{month:"short",day:"numeric"})}function w(d){const u=new Date().getTime()-d.getTime(),m=Math.floor(u/(1e3*60)),y=Math.floor(u/(1e3*60*60)),x=Math.floor(u/(1e3*60*60*24));return m<1?"Just now":m<60?`${m}m ago`:y<24?`${y}h ago`:x<7?`${x}d ago`:d.toLocaleDateString("en-US",{month:"short",day:"numeric"})}function k(){r&&r.parentNode&&r.parentNode.removeChild(r)}return{mount:t,refresh:s,destroy:k}}const re=c.triggers,ce=c.coRegulation;function le(){let r,e,t,s,n,i,o,a,l,w,k,d={};function h(v){v.innerHTML="",r=S("div",{className:"form form--tantrum"});const b=document.createElement("div");b.style.cssText=`
       display: flex;
       margin-bottom: 16px;
       border-bottom: 2px solid #e0e0e0;
@@ -1119,29 +1233,29 @@
       display: block;
     `;const T=document.createElement("div");T.className="history-content",T.style.cssText=`
       display: none;
-    `;const B=S("label",{text:c.forms.trigger,id:"tantrum_trigger_label"});B.htmlFor="tantrum_trigger",e=S("select",{id:"tantrum_trigger"});const L=document.createElement("option");L.text=c.placeholders.selectTrigger,L.value="",e.appendChild(L),re.forEach(M=>{const E=document.createElement("option");E.text=M.charAt(0).toUpperCase()+M.slice(1),E.value=M,e.appendChild(E)}),g.appendChild(B),g.appendChild(e);const _=document.createElement("div");_.style.cssText=`
+    `;const B=S("label",{text:c.forms.trigger,id:"tantrum_trigger_label"});B.htmlFor="tantrum_trigger",e=S("select",{id:"tantrum_trigger"});const L=document.createElement("option");L.text=c.placeholders.selectTrigger,L.value="",e.appendChild(L),re.forEach(M=>{const E=document.createElement("option");E.text=M.charAt(0).toUpperCase()+M.slice(1),E.value=M,e.appendChild(E)}),g.appendChild(B),g.appendChild(e);const q=document.createElement("div");q.style.cssText=`
       margin: 16px 0;
       padding: 16px;
       background: #f9f9f9;
       border-radius: 8px;
-    `,k=se(),k.mount(_),g.appendChild(_);const D=S("label",{text:"Media Clip (Optional)",id:"tantrum_media_label"});D.htmlFor="tantrum_media",a=S("input",{id:"tantrum_media"}),a.type="file",a.accept="audio/*,video/*",a.capture="environment",a.style.cssText=`
+    `,w=se(),w.mount(q),g.appendChild(q);const A=S("label",{text:"Media Clip (Optional)",id:"tantrum_media_label"});A.htmlFor="tantrum_media",a=S("input",{id:"tantrum_media"}),a.type="file",a.accept="audio/*,video/*",a.capture="environment",a.style.cssText=`
       margin: 8px 0;
       padding: 8px;
       border: 2px dashed #ccc;
       border-radius: 4px;
       width: 100%;
       box-sizing: border-box;
-    `,d=document.createElement("div"),d.style.cssText=`
+    `,l=document.createElement("div"),l.style.cssText=`
       margin-top: 8px;
       padding: 8px;
       background: #f0f0f0;
       border-radius: 4px;
       font-size: 12px;
       color: #666;
-    `,a.addEventListener("change",u),g.appendChild(D),g.appendChild(a),g.appendChild(d);const P=S("label",{text:c.forms.duration,id:"tantrum_duration_label"});P.htmlFor="tantrum_duration",t=S("input",{id:"tantrum_duration"}),t.type="number",t.min="0",t.max="30",t.step="1",t.placeholder="0",t.style.height="40px",g.appendChild(P),g.appendChild(t);const F=S("label",{text:c.forms.coRegulation,id:"tantrum_coreg_label"});F.htmlFor="tantrum_coreg",s=S("div",{id:"tantrum_coreg"}),ce.forEach(M=>{const E=S("input",{id:`tantrum_coreg_${M.value}`});E.type="checkbox",E.value=M.value,E.style.marginRight="8px";const R=S("label",{text:M.label});R.htmlFor=E.id,R.style.marginRight="16px",s.appendChild(E),s.appendChild(R)}),g.appendChild(F),g.appendChild(s);const N=S("label",{text:c.forms.environmentNoise,id:"tantrum_noise_label"});N.htmlFor="tantrum_noise",n=S("input",{id:"tantrum_noise"}),n.type="checkbox",n.style.height="40px",g.appendChild(N),g.appendChild(n);const H=S("label",{text:c.forms.notes,id:"tantrum_notes_label"});H.htmlFor="tantrum_notes",i=S("textarea",{id:"tantrum_notes"}),i.rows=2,i.maxLength=120,i.style.height="60px",o=S("div",{className:"notes-counter"}),X(i,120,o),g.appendChild(H),g.appendChild(i),g.appendChild(o),w=oe(),w.mount(T),p.addEventListener("click",()=>{g.style.display="block",T.style.display="none",p.style.background="#2196F3",p.style.color="white",f.style.background="#f5f5f5",f.style.color="#666"}),f.addEventListener("click",()=>{g.style.display="none",T.style.display="block",p.style.background="#f5f5f5",p.style.color="#666",f.style.background="#2196F3",f.style.color="white",w.refresh()}),r.appendChild(g),r.appendChild(T),v.appendChild(r)}async function u(v){const p=v.target.files?.[0];if(!p){l={},d.textContent="";return}d.textContent=c.placeholders.processing;try{l=await m(p);const f=l.duration_s?`${Math.round(l.duration_s)}s`:"Unknown",g=l.avg_level_dbfs?`${Math.round(l.avg_level_dbfs)}dB`:"Unknown",T=l.motion_estimate?`${Math.round(l.motion_estimate*100)}%`:"Unknown";d.innerHTML=`
+    `,a.addEventListener("change",u),g.appendChild(A),g.appendChild(a),g.appendChild(l);const P=S("label",{text:c.forms.duration,id:"tantrum_duration_label"});P.htmlFor="tantrum_duration",t=S("input",{id:"tantrum_duration"}),t.type="number",t.min="0",t.max="30",t.step="1",t.placeholder="0",t.style.height="40px",g.appendChild(P),g.appendChild(t);const F=S("label",{text:c.forms.coRegulation,id:"tantrum_coreg_label"});F.htmlFor="tantrum_coreg",s=S("div",{id:"tantrum_coreg"}),ce.forEach(M=>{const E=S("input",{id:`tantrum_coreg_${M.value}`});E.type="checkbox",E.value=M.value,E.style.marginRight="8px";const _=S("label",{text:M.label});_.htmlFor=E.id,_.style.marginRight="16px",s.appendChild(E),s.appendChild(_)}),g.appendChild(F),g.appendChild(s);const N=S("label",{text:c.forms.environmentNoise,id:"tantrum_noise_label"});N.htmlFor="tantrum_noise",n=S("input",{id:"tantrum_noise"}),n.type="checkbox",n.style.height="40px",g.appendChild(N),g.appendChild(n);const H=S("label",{text:c.forms.notes,id:"tantrum_notes_label"});H.htmlFor="tantrum_notes",i=S("textarea",{id:"tantrum_notes"}),i.rows=2,i.maxLength=120,i.style.height="60px",o=S("div",{className:"notes-counter"}),X(i,120,o),g.appendChild(H),g.appendChild(i),g.appendChild(o),k=oe(),k.mount(T),p.addEventListener("click",()=>{g.style.display="block",T.style.display="none",p.style.background="#2196F3",p.style.color="white",f.style.background="#f5f5f5",f.style.color="#666"}),f.addEventListener("click",()=>{g.style.display="none",T.style.display="block",p.style.background="#f5f5f5",p.style.color="#666",f.style.background="#2196F3",f.style.color="white",k.refresh()}),r.appendChild(g),r.appendChild(T),v.appendChild(r)}async function u(v){const p=v.target.files?.[0];if(!p){d={},l.textContent="";return}l.textContent=c.placeholders.processing;try{d=await m(p);const f=d.duration_s?`${Math.round(d.duration_s)}s`:"Unknown",g=d.avg_level_dbfs?`${Math.round(d.avg_level_dbfs)}dB`:"Unknown",T=d.motion_estimate?`${Math.round(d.motion_estimate*100)}%`:"Unknown";l.innerHTML=`
         <strong>${p.name}</strong><br>
         Duration: ${f} | Level: ${g}${p.type.startsWith("video")?` | Motion: ${T}`:""}
-      `}catch(f){console.error("Error processing media:",f),d.textContent=`Error processing ${p.name}`,l={}}}async function m(v){const b={};try{if(v.type.startsWith("audio/")){const p=new(window.AudioContext||window.webkitAudioContext),f=await v.arrayBuffer(),g=await p.decodeAudioData(f);b.duration_s=g.duration;const T=g.getChannelData(0),B=T.length;let L=0;for(let D=0;D<B;D+=1e3)L+=Math.abs(T[D]);const _=L/(B/1e3);b.avg_level_dbfs=20*Math.log10(_)+60,p.close()}else if(v.type.startsWith("video/")){const p=document.createElement("video");p.src=URL.createObjectURL(v),await new Promise(f=>{p.onloadedmetadata=()=>{b.duration_s=p.duration,b.motion_estimate=Math.random()*.5+.2,URL.revokeObjectURL(p.src),f()}})}}catch(p){console.warn("Media processing failed:",p)}return b}function y(){const v={};e.value&&(v.trigger=e.value);const b=t.value.trim();if(b!==""){const g=Number(b);isNaN(g)||(v.duration_min=Z(g,0,30))}const p=ee(s,"input[type=checkbox]");p.length&&(v.co_reg=p),n.checked&&(v.environment_noise=!0);const f=i.value.trim();return f&&(v.notes=f.slice(0,120)),v.intensity_1_10=k.getValue(),Object.keys(l).length>0&&(v.tantrum_proxy=l),v}function x(){const v=t.value.trim();if(v!==""){const b=Number(v);if(isNaN(b)||b<0||b>30)return{ok:!1,message:"Duration must be 0–30"}}return{ok:!0}}async function C(){e.value="",t.value="",s.querySelectorAll("input[type=checkbox]").forEach(v=>v.checked=!1),n.checked=!1,i.value="",o.textContent="0/120",k.setValue(5),a.value="",l={},d.textContent=""}return{mount:h,getContext:y,validate:x,reset:C}}class de{config;router;container;currentScreen=null;tantrumForm=null;constructor(){this.config=this.parseUrlParams(),console.log("App config:",this.config),this.stripTokenFromUrl(),this.container=document.getElementById("app"),this.router=new O,this.initializeUI(),this.setupRoutes()}parseUrlParams(){const e=new URLSearchParams(window.location.search);return{mode:e.get("mode")||"helper",family:e.get("family")||"fam_unknown",session:e.get("session")||`fam_unknown_${Date.now()}`,token:e.get("tok")||null,dyad:e.get("dyad")||"night"}}initializeUI(){window.location.hash||(this.config.dyad==="tantrum"?window.location.hash="#tantrum/home":this.config.dyad==="meal"?window.location.hash="#meal/home":window.location.hash="#night/home")}setupRoutes(){this.router.register({dyad:"tantrum",screen:"home"},()=>{this.renderScreen(new j(this.container,this.router))}),this.router.register({dyad:"tantrum",screen:"capture"},()=>{const t=this.router.getCurrentRoute()?.params?.intensity||"5";this.renderScreen(new U(this.container,this.router,t))}),this.router.register({dyad:"tantrum",screen:"thermo"},()=>{const e=this.router.getCurrentRoute(),t=e?.params?.intensity||"5",s=e?.params?.hasAudio||"false",n=e?.params?.hasVideo||"false";this.renderScreen(new V(this.container,this.router,t,s,n))}),this.router.register({dyad:"tantrum",screen:"history"},()=>{this.renderScreen(new z(this.container,this.router))}),this.router.register({dyad:"tantrum",screen:"settings"},()=>{this.renderScreen(new G(this.container,this.router))}),this.router.register({dyad:"tantrum",screen:"form"},()=>{this.renderTantrumForm()}),this.router.register({dyad:"meal",screen:"home"},()=>{this.renderScreen(new W(this.container,this.router))}),this.router.register({dyad:"meal",screen:"meal-logging"},()=>{const e=this.router.getCurrentRoute(),t=e?.params?.action||"",s=e?.params?.rating||"0";this.renderScreen(new Y(this.container,this.router,t,s))}),this.router.register({dyad:"meal",screen:"insights"},()=>{const e=this.router.getCurrentRoute(),t=e?.params?.rating||"0",s=e?.params?.hasImage||"false",n=e?.params?.dietaryDiversity||"0.5",i=e?.params?.clutterScore||"0.5",o=e?.params?.plateCoverage||"0.5";this.renderScreen(new J(this.container,this.router,t,s,n,i,o))}),this.router.register({dyad:"meal",screen:"gallery"},()=>{this.renderScreen(new K(this.container,this.router))}),this.router.register({dyad:"meal",screen:"settings"},()=>{this.renderScreen(new Q(this.container,this.router))}),this.router.register({dyad:"night",screen:"home"},()=>{this.renderNightScreen()})}renderTantrumForm(){this.currentScreen&&this.currentScreen.destroy&&this.currentScreen.destroy(),this.container.innerHTML=`
+      `}catch(f){console.error("Error processing media:",f),l.textContent=`Error processing ${p.name}`,d={}}}async function m(v){const b={};try{if(v.type.startsWith("audio/")){const p=new(window.AudioContext||window.webkitAudioContext),f=await v.arrayBuffer(),g=await p.decodeAudioData(f);b.duration_s=g.duration;const T=g.getChannelData(0),B=T.length;let L=0;for(let A=0;A<B;A+=1e3)L+=Math.abs(T[A]);const q=L/(B/1e3);b.avg_level_dbfs=20*Math.log10(q)+60,p.close()}else if(v.type.startsWith("video/")){const p=document.createElement("video");p.src=URL.createObjectURL(v),await new Promise(f=>{p.onloadedmetadata=()=>{b.duration_s=p.duration,b.motion_estimate=Math.random()*.5+.2,URL.revokeObjectURL(p.src),f()}})}}catch(p){console.warn("Media processing failed:",p)}return b}function y(){const v={};e.value&&(v.trigger=e.value);const b=t.value.trim();if(b!==""){const g=Number(b);isNaN(g)||(v.duration_min=Z(g,0,30))}const p=ee(s,"input[type=checkbox]");p.length&&(v.co_reg=p),n.checked&&(v.environment_noise=!0);const f=i.value.trim();return f&&(v.notes=f.slice(0,120)),v.intensity_1_10=w.getValue(),Object.keys(d).length>0&&(v.tantrum_proxy=d),v}function x(){const v=t.value.trim();if(v!==""){const b=Number(v);if(isNaN(b)||b<0||b>30)return{ok:!1,message:"Duration must be 0–30"}}return{ok:!0}}async function C(){e.value="",t.value="",s.querySelectorAll("input[type=checkbox]").forEach(v=>v.checked=!1),n.checked=!1,i.value="",o.textContent="0/120",w.setValue(5),a.value="",d={},l.textContent=""}return{mount:h,getContext:y,validate:x,reset:C}}class de{config;router;container;currentScreen=null;tantrumForm=null;constructor(){this.config=this.parseUrlParams(),console.log("App config:",this.config),this.stripTokenFromUrl(),this.container=document.getElementById("app"),this.router=new O,this.initializeUI(),this.setupRoutes()}parseUrlParams(){const e=new URLSearchParams(window.location.search);return{mode:e.get("mode")||"helper",family:e.get("family")||"fam_unknown",session:e.get("session")||`fam_unknown_${Date.now()}`,token:e.get("tok")||null,dyad:e.get("dyad")||"night"}}initializeUI(){window.location.hash||(this.config.dyad==="tantrum"?window.location.hash="#tantrum/home":this.config.dyad==="meal"?window.location.hash="#meal/home":window.location.hash="#night/home")}setupRoutes(){this.router.register({dyad:"tantrum",screen:"home"},()=>{this.renderScreen(new j(this.container,this.router))}),this.router.register({dyad:"tantrum",screen:"capture"},()=>{const t=this.router.getCurrentRoute()?.params?.intensity||"5";this.renderScreen(new U(this.container,this.router,t))}),this.router.register({dyad:"tantrum",screen:"thermo"},()=>{const e=this.router.getCurrentRoute(),t=e?.params?.intensity||"5",s=e?.params?.hasAudio||"false",n=e?.params?.hasVideo||"false";this.renderScreen(new V(this.container,this.router,t,s,n))}),this.router.register({dyad:"tantrum",screen:"history"},()=>{this.renderScreen(new z(this.container,this.router))}),this.router.register({dyad:"tantrum",screen:"settings"},()=>{this.renderScreen(new G(this.container,this.router))}),this.router.register({dyad:"tantrum",screen:"form"},()=>{this.renderTantrumForm()}),this.router.register({dyad:"meal",screen:"home"},()=>{this.renderScreen(new W(this.container,this.router))}),this.router.register({dyad:"meal",screen:"meal-logging"},()=>{const e=this.router.getCurrentRoute(),t=e?.params?.action||"",s=e?.params?.rating||"0";this.renderScreen(new Y(this.container,this.router,t,s))}),this.router.register({dyad:"meal",screen:"insights"},()=>{const e=this.router.getCurrentRoute(),t=e?.params?.rating||"0",s=e?.params?.hasImage||"false",n=e?.params?.dietaryDiversity||"0.5",i=e?.params?.clutterScore||"0.5",o=e?.params?.plateCoverage||"0.5",a=e?.params?.mode||"patterns";this.renderScreen(new Q(this.container,this.router,t,s,n,i,o,a))}),this.router.register({dyad:"meal",screen:"gallery"},()=>{this.renderScreen(new J(this.container,this.router))}),this.router.register({dyad:"meal",screen:"settings"},()=>{this.renderScreen(new K(this.container,this.router))}),this.router.register({dyad:"night",screen:"home"},()=>{this.renderNightScreen()})}renderTantrumForm(){this.currentScreen&&this.currentScreen.destroy&&this.currentScreen.destroy(),this.container.innerHTML=`
       <div class="screen tantrum-form">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
@@ -1157,7 +1271,7 @@
           <button class="btn primary" data-action="save">Save Session</button>
         </nav>
       </div>
-    `;const e=this.container.querySelector("#tantrum-form-container");this.tantrumForm=le(),this.tantrumForm.mount(e),this.bindTantrumFormEvents()}bindTantrumFormEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const t=this.container.querySelector('[data-action="cancel"]');t&&t.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const s=this.container.querySelector('[data-action="save"]');s&&s.addEventListener("click",async()=>{await this.saveTantrumSession()})}async saveTantrumSession(){if(!this.tantrumForm)return;const e=this.tantrumForm.validate();if(!e.ok){alert(e.message);return}const t=this.tantrumForm.getContext(),s={id:`tantrum_${Date.now()}`,ts:new Date().toISOString(),family_id:this.config.family,session_id:this.config.session,...t};try{await q.saveSession(s),alert("Session saved successfully!"),this.tantrumForm.reset(),this.router.navigate({dyad:"tantrum",screen:"home"})}catch(n){console.error("Error saving session:",n),alert("Error saving session. Please try again.")}}renderScreen(e){this.currentScreen&&this.currentScreen.destroy&&this.currentScreen.destroy(),this.currentScreen=e,e.render()}renderNightScreen(){const e="Night Helper";this.container.innerHTML=`
+    `;const e=this.container.querySelector("#tantrum-form-container");this.tantrumForm=le(),this.tantrumForm.mount(e),this.bindTantrumFormEvents()}bindTantrumFormEvents(){const e=this.container.querySelector(".back-btn");e&&e.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const t=this.container.querySelector('[data-action="cancel"]');t&&t.addEventListener("click",()=>{this.router.navigate({dyad:"tantrum",screen:"home"})});const s=this.container.querySelector('[data-action="save"]');s&&s.addEventListener("click",async()=>{await this.saveTantrumSession()})}async saveTantrumSession(){if(!this.tantrumForm)return;const e=this.tantrumForm.validate();if(!e.ok){alert(e.message);return}const t=this.tantrumForm.getContext(),s={id:`tantrum_${Date.now()}`,ts:new Date().toISOString(),family_id:this.config.family,session_id:this.config.session,...t};try{await R.saveSession(s),alert("Session saved successfully!"),this.tantrumForm.reset(),this.router.navigate({dyad:"tantrum",screen:"home"})}catch(n){console.error("Error saving session:",n),alert("Error saving session. Please try again.")}}renderScreen(e){this.currentScreen&&this.currentScreen.destroy&&this.currentScreen.destroy(),this.currentScreen=e,e.render()}renderNightScreen(){const e="Night Helper";this.container.innerHTML=`
       <div class="container">
         <header>
           <h1>Silli ${e}</h1>

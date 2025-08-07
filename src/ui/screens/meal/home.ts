@@ -162,7 +162,7 @@ export class MealHomeScreen {
         this.router.navigate({
           dyad: 'meal',
           screen: 'insights',
-          params: { action, rating: this.currentRating.toString() }
+          params: { action, rating: this.currentRating.toString(), mode: 'question' }
         });
         break;
     }

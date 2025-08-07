@@ -17,8 +17,9 @@ export class MealInsightsScreen {
   private currentTip: string = '';
   private currentBadge: string = '';
   private tipsData: any = null;
+  private mode: 'question' | 'patterns' = 'patterns'; // Add mode tracking
 
-  constructor(container: HTMLElement, router: Router, rating: string, hasImage: string, dietaryDiversity: string, clutterScore: string, plateCoverage: string) {
+  constructor(container: HTMLElement, router: Router, rating: string, hasImage: string, dietaryDiversity: string, clutterScore: string, plateCoverage: string, mode?: string) {
     this.container = container;
     this.router = router;
     this.rating = rating;
@@ -26,88 +27,24 @@ export class MealInsightsScreen {
     this.dietaryDiversity = parseFloat(dietaryDiversity);
     this.clutterScore = parseFloat(clutterScore);
     this.plateCoverage = parseFloat(plateCoverage);
+    this.mode = (mode as 'question' | 'patterns') || 'patterns';
   }
 
   public async render(): Promise<void> {
     await this.loadTipsData();
     this.calculateMealMood();
     
+    const isQuestionMode = this.mode === 'question';
+    
     this.container.innerHTML = `
       <div class="screen meal-insights">
         <header class="screen-header">
           <button class="back-btn" data-action="back">← Back</button>
-          <h1>📊 Meal Insights</h1>
+          <h1>${isQuestionMode ? '🎤 Ask Question' : '📊 Meal Insights'}</h1>
         </header>
 
         <main class="screen-content">
-          <section class="mood-section">
-            <h3>Meal Mood Score</h3>
-            <div class="mood-display">
-              <div class="mood-score">
-                <div class="score-circle">
-                  <span class="score-value" id="mood-score">${this.adjustedMood}</span>
-                  <span class="score-label">/ 100</span>
-                </div>
-              </div>
-              <div class="mood-description" id="mood-description">
-                ${this.getMoodDescription()}
-              </div>
-            </div>
-          </section>
-
-          <section class="analysis-section">
-            <h3>Image Analysis</h3>
-            <div class="analysis-grid">
-              <div class="analysis-card">
-                <div class="analysis-icon">🌈</div>
-                <h4>Dietary Diversity</h4>
-                <div class="analysis-value">${(this.dietaryDiversity * 100).toFixed(0)}%</div>
-                <div class="analysis-bar">
-                  <div class="bar-fill" style="width: ${this.dietaryDiversity * 100}%"></div>
-                </div>
-              </div>
-              
-              <div class="analysis-card">
-                <div class="analysis-icon">🎯</div>
-                <h4>Clutter Score</h4>
-                <div class="analysis-value">${(this.clutterScore * 100).toFixed(0)}%</div>
-                <div class="analysis-bar">
-                  <div class="bar-fill" style="width: ${this.clutterScore * 100}%"></div>
-                </div>
-              </div>
-              
-              <div class="analysis-card">
-                <div class="analysis-icon">🍽️</div>
-                <h4>Plate Coverage</h4>
-                <div class="analysis-value">${(this.plateCoverage * 100).toFixed(0)}%</div>
-                <div class="analysis-bar">
-                  <div class="bar-fill" style="width: ${this.plateCoverage * 100}%"></div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="tip-section">
-            <h3>Personalized Tip</h3>
-            <div class="tip-card">
-              <div class="tip-content" id="tip-content">
-                ${this.currentTip}
-              </div>
-            </div>
-          </section>
-
-          <section class="badge-section" id="badge-section" style="display: none;">
-            <h3>Meal Achievement</h3>
-            <div class="badge-card">
-              <div class="badge-content" id="badge-content">
-                <!-- Badge will be inserted here -->
-              </div>
-            </div>
-          </section>
-
-          <section class="privacy-notice">
-            <p>🔒 Analysis completed on your device. No data was sent to servers.</p>
-          </section>
+          ${isQuestionMode ? this.renderQuestionMode() : this.renderPatternsMode()}
         </main>
 
         <nav class="screen-nav">
@@ -118,8 +55,122 @@ export class MealInsightsScreen {
     `;
 
     this.bindEvents();
-    this.selectTip();
-    this.checkForBadge();
+    if (!isQuestionMode) {
+      this.selectTip();
+      this.checkForBadge();
+    }
+  }
+
+  private renderQuestionMode(): string {
+    return `
+      <section class="question-section">
+        <h3>Ask About Feeding Patterns</h3>
+        <div class="question-form">
+          <div class="form-group">
+            <label>Your Question</label>
+            <textarea class="form-textarea" id="question-input" placeholder="e.g., Why does my child refuse vegetables? How can I make mealtime less stressful? What are good portion sizes for a 3-year-old?"></textarea>
+          </div>
+          
+          <div class="question-suggestions">
+            <h4>Suggested Questions:</h4>
+            <div class="suggestion-buttons">
+              <button class="btn secondary suggestion-btn" data-question="How can I encourage my child to try new foods?">Try new foods</button>
+              <button class="btn secondary suggestion-btn" data-question="What are healthy snack alternatives?">Healthy snacks</button>
+              <button class="btn secondary suggestion-btn" data-question="How do I handle picky eating?">Picky eating</button>
+              <button class="btn secondary suggestion-btn" data-question="What's a good meal schedule for toddlers?">Meal schedule</button>
+            </div>
+          </div>
+          
+          <button class="btn primary ask-btn" data-action="ask-question">🤖 Ask AI Assistant</button>
+        </div>
+      </section>
+
+      <section class="answer-section" id="answer-section" style="display: none;">
+        <h3>AI Response</h3>
+        <div class="answer-card">
+          <div class="answer-content" id="answer-content">
+            <!-- AI response will be inserted here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="privacy-notice">
+        <p>🔒 Your question and response are processed locally. No data is sent to external servers.</p>
+      </section>
+    `;
+  }
+
+  private renderPatternsMode(): string {
+    return `
+      <section class="mood-section">
+        <h3>Meal Mood Score</h3>
+        <div class="mood-display">
+          <div class="mood-score">
+            <div class="score-circle">
+              <span class="score-value" id="mood-score">${this.adjustedMood}</span>
+              <span class="score-label">/ 100</span>
+            </div>
+          </div>
+          <div class="mood-description" id="mood-description">
+            ${this.getMoodDescription()}
+          </div>
+        </div>
+      </section>
+
+      <section class="analysis-section">
+        <h3>Image Analysis</h3>
+        <div class="analysis-grid">
+          <div class="analysis-card">
+            <div class="analysis-icon">🌈</div>
+            <h4>Dietary Diversity</h4>
+            <div class="analysis-value">${(this.dietaryDiversity * 100).toFixed(0)}%</div>
+            <div class="analysis-bar">
+              <div class="bar-fill" style="width: ${this.dietaryDiversity * 100}%"></div>
+            </div>
+          </div>
+          
+          <div class="analysis-card">
+            <div class="analysis-icon">🎯</div>
+            <h4>Clutter Score</h4>
+            <div class="analysis-value">${(this.clutterScore * 100).toFixed(0)}%</div>
+            <div class="analysis-bar">
+              <div class="bar-fill" style="width: ${this.clutterScore * 100}%"></div>
+            </div>
+          </div>
+          
+          <div class="analysis-card">
+            <div class="analysis-icon">🍽️</div>
+            <h4>Plate Coverage</h4>
+            <div class="analysis-value">${(this.plateCoverage * 100).toFixed(0)}%</div>
+            <div class="analysis-bar">
+              <div class="bar-fill" style="width: ${this.plateCoverage * 100}%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tip-section">
+        <h3>Personalized Tip</h3>
+        <div class="tip-card">
+          <div class="tip-content" id="tip-content">
+            ${this.currentTip}
+          </div>
+        </div>
+      </section>
+
+      <section class="badge-section" id="badge-section" style="display: none;">
+        <h3>Meal Achievement</h3>
+        <div class="badge-card">
+          <div class="badge-content" id="badge-content">
+            <!-- Badge will be inserted here -->
+          </div>
+        </div>
+      </section>
+
+      <section class="privacy-notice">
+        <p>🔒 Analysis completed on your device. No data was sent to servers.</p>
+      </section>
+    `;
   }
 
   private async loadTipsData(): Promise<void> {
@@ -235,6 +286,29 @@ export class MealInsightsScreen {
       });
     }
 
+    // Question mode specific events
+    if (this.mode === 'question') {
+      // Suggestion buttons
+      const suggestionBtns = this.container.querySelectorAll('.suggestion-btn');
+      suggestionBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const question = (e.currentTarget as HTMLElement).dataset.question || '';
+          const questionInput = this.container.querySelector('#question-input') as HTMLTextAreaElement;
+          if (questionInput) {
+            questionInput.value = question;
+          }
+        });
+      });
+
+      // Ask question button
+      const askBtn = this.container.querySelector('.ask-btn');
+      if (askBtn) {
+        askBtn.addEventListener('click', () => {
+          this.handleAskQuestion();
+        });
+      }
+    }
+
     // Save button
     const saveBtn = this.container.querySelector('[data-action="save"]');
     if (saveBtn) {
@@ -249,6 +323,88 @@ export class MealInsightsScreen {
       exportBtn.addEventListener('click', () => {
         this.handleExport();
       });
+    }
+  }
+
+  private async handleAskQuestion(): Promise<void> {
+    const questionInput = this.container.querySelector('#question-input') as HTMLTextAreaElement;
+    const question = questionInput?.value.trim();
+    
+    if (!question) {
+      alert('Please enter a question first.');
+      return;
+    }
+
+    // Show loading state
+    const askBtn = this.container.querySelector('.ask-btn') as HTMLButtonElement;
+    const originalText = askBtn.textContent;
+    askBtn.textContent = '🤖 Thinking...';
+    askBtn.disabled = true;
+
+    try {
+      // Simulate AI response (in a real app, this would call an AI service)
+      const response = await this.generateAIResponse(question);
+      
+      // Display the response
+      this.displayAnswer(response);
+    } catch (error) {
+      console.error('Error generating response:', error);
+      alert('Sorry, there was an error generating the response. Please try again.');
+    } finally {
+      // Restore button state
+      askBtn.textContent = originalText;
+      askBtn.disabled = false;
+    }
+  }
+
+  private async generateAIResponse(question: string): Promise<string> {
+    // Simulate AI processing time
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Simple response logic based on question keywords
+    const lowerQuestion = question.toLowerCase();
+    
+    if (lowerQuestion.includes('vegetable') || lowerQuestion.includes('veggie')) {
+      return `Great question! Here are some tips for encouraging vegetable consumption:\n\n1. **Lead by example** - Eat vegetables enthusiastically in front of your child\n2. **Make it fun** - Try "rainbow plates" with colorful vegetables\n3. **Involve them** - Let your child help choose and prepare vegetables\n4. **Start small** - Begin with tiny portions and gradually increase\n5. **Be patient** - It can take 10-15 exposures before a child accepts a new food\n\nRemember, every child is different, and it's normal for preferences to change over time.`;
+    } else if (lowerQuestion.includes('snack') || lowerQuestion.includes('healthy')) {
+      return `Here are some nutritious snack ideas for toddlers:\n\n**Fruits & Vegetables:**\n• Apple slices with peanut butter\n• Carrot sticks with hummus\n• Banana with yogurt\n\n**Protein-rich:**\n• Hard-boiled eggs\n• Cheese cubes\n• Greek yogurt\n\n**Grains:**\n• Whole grain crackers\n• Oatmeal with berries\n• Rice cakes\n\n**Avoid:** Processed snacks, sugary drinks, and large portions that might spoil their appetite for meals.`;
+    } else if (lowerQuestion.includes('picky') || lowerQuestion.includes('refuse')) {
+      return `Picky eating is very common and usually temporary. Here's how to handle it:\n\n**Stay Calm:** Don't make mealtime a power struggle\n**Offer Choices:** "Would you like carrots or broccoli?"\n**Keep Trying:** Continue offering rejected foods in different ways\n**Set Limits:** "This is what's for dinner" (no short-order cooking)\n**Praise Efforts:** Celebrate when they try new foods\n**Be Patient:** This phase usually passes with time\n\nRemember: It's your job to offer healthy foods, but your child decides how much to eat.`;
+    } else if (lowerQuestion.includes('schedule') || lowerQuestion.includes('meal time')) {
+      return `A consistent meal schedule helps children develop healthy eating habits:\n\n**Typical Toddler Schedule:**\n• **Breakfast:** 7-8 AM\n• **Morning Snack:** 9-10 AM\n• **Lunch:** 11:30 AM - 12:30 PM\n• **Afternoon Snack:** 2-3 PM\n• **Dinner:** 5-6 PM\n\n**Tips:**\n• Keep meals 2-3 hours apart\n• Limit snacks to 30 minutes before meals\n• Offer water between meals\n• Be consistent with timing\n• Allow 20-30 minutes for meals\n\nAdjust timing based on your family's schedule and your child's hunger cues.`;
+    } else {
+      return `Thank you for your question about feeding! Here are some general tips for healthy eating habits:\n\n**Create a Positive Environment:**\n• Eat together as a family when possible\n• Make mealtime pleasant and stress-free\n• Avoid using food as rewards or punishments\n\n**Offer Variety:**\n• Include foods from all food groups\n• Present foods in different ways\n• Let your child explore new textures and flavors\n\n**Trust Your Child:**\n• They know when they're hungry or full\n• Don't force them to eat\n• Offer appropriate portion sizes\n\nIf you have specific concerns about your child's eating, consider consulting with a pediatrician or registered dietitian.`;
+    }
+  }
+
+  private displayAnswer(response: string): void {
+    const answerSection = this.container.querySelector('#answer-section') as HTMLElement;
+    const answerContent = this.container.querySelector('#answer-content') as HTMLElement;
+    
+    if (answerSection && answerContent) {
+      answerSection.style.display = 'block';
+      answerContent.innerHTML = `
+        <div class="answer-text">
+          ${response.replace(/\n/g, '<br>')}
+        </div>
+        <button class="btn secondary new-question-btn" data-action="new-question">Ask Another Question</button>
+      `;
+      
+      // Bind new question button
+      const newQuestionBtn = answerContent.querySelector('.new-question-btn');
+      if (newQuestionBtn) {
+        newQuestionBtn.addEventListener('click', () => {
+          answerSection.style.display = 'none';
+          const questionInput = this.container.querySelector('#question-input') as HTMLTextAreaElement;
+          if (questionInput) {
+            questionInput.value = '';
+            questionInput.focus();
+          }
+        });
+      }
+      
+      // Scroll to answer
+      answerSection.scrollIntoView({ behavior: 'smooth' });
     }
   }
 

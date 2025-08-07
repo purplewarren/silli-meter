@@ -182,19 +182,67 @@ export class MealLoggingScreen {
   }
 
   private handleCapture(): void {
-    // TODO: Implement photo capture logic
-    console.log(`Capturing meal photo with rating ${this.rating}`);
+    // Create a file input for camera access
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment'; // Use back camera
     
-    // For now, just enable the save button
-    this.enableSaveButton();
+    input.addEventListener('change', (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        this.handleImageSelected(file);
+      }
+    });
+    
+    input.click();
   }
 
   private handleUpload(): void {
-    // TODO: Implement photo upload logic
-    console.log('Uploading meal photo');
+    // Create a file input for file selection
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
     
-    // For now, just enable the save button
-    this.enableSaveButton();
+    input.addEventListener('change', (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        this.handleImageSelected(file);
+      }
+    });
+    
+    input.click();
+  }
+
+  private handleImageSelected(file: File): void {
+    // Display the selected image
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const imageData = e.target?.result as string;
+      this.displayImage(imageData);
+      this.enableSaveButton();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  private displayImage(imageData: string): void {
+    const captureArea = this.container.querySelector('.capture-area');
+    if (captureArea) {
+      captureArea.innerHTML = `
+        <div class="captured-image">
+          <img src="${imageData}" alt="Captured meal" style="max-width: 100%; max-height: 300px; border-radius: 8px;">
+          <button class="btn secondary retake-btn" data-action="retake">🔄 Retake Photo</button>
+        </div>
+      `;
+      
+      // Bind retake button
+      const retakeBtn = captureArea.querySelector('.retake-btn');
+      if (retakeBtn) {
+        retakeBtn.addEventListener('click', () => {
+          this.render(); // Re-render to show capture controls again
+        });
+      }
+    }
   }
 
   private validateForm(): void {

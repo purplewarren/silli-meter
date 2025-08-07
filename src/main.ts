@@ -122,7 +122,8 @@ class SilliApp {
       const dietaryDiversity = route?.params?.dietaryDiversity || '0.5';
       const clutterScore = route?.params?.clutterScore || '0.5';
       const plateCoverage = route?.params?.plateCoverage || '0.5';
-      this.renderScreen(new MealInsightsScreen(this.container, this.router, rating, hasImage, dietaryDiversity, clutterScore, plateCoverage));
+      const mode = route?.params?.mode || 'patterns';
+      this.renderScreen(new MealInsightsScreen(this.container, this.router, rating, hasImage, dietaryDiversity, clutterScore, plateCoverage, mode));
     });
 
     this.router.register({ dyad: 'meal', screen: 'gallery' }, () => {
