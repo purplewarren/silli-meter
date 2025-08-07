@@ -20,8 +20,6 @@ export interface I18nData {
     };
     badges: {
       label: string;
-    };
-    badge: {
       speech: string;
       music: string;
       fluctuating: string;
@@ -29,8 +27,6 @@ export interface I18nData {
     };
     tips: {
       title: string;
-    };
-    tip: {
       lower_volume: string;
       single_sound: string;
       soft_light: string;
@@ -51,57 +47,8 @@ export interface I18nData {
     };
     footer_privacy: string;
   };
-  meal: {
-    title: string;
-    subtitle: string;
-    sections: {
-      howWasMeal: string;
-      whatWouldYouLike: string;
-      quickActions: string;
-    };
-    buttons: {
-      snapMeal: string;
-      askQuestion: string;
-      logMeal: string;
-      viewPatterns: string;
-      gallery: string;
-      settings: string;
-      takePhoto: string;
-      uploadPhoto: string;
-      saveMeal: string;
-      cancel: string;
-      back: string;
-    };
-    descriptions: {
-      selectRating: string;
-      takePhotoOfMeal: string;
-      getInsightsAboutFeeding: string;
-    };
-    privacy: {
-      photosStayPrivate: string;
-      dataStaysLocal: string;
-    };
-    form: {
-      mealType: string;
-      foodItems: string;
-      rating: string;
-      notes: string;
-    };
-    insights: {
-      title: string;
-      moodScore: string;
-      imageAnalysis: string;
-      personalizedTip: string;
-      mealAchievement: string;
-    };
-    question: {
-      title: string;
-      placeholder: string;
-      suggestions: string;
-      askAI: string;
-      aiResponse: string;
-      askAnother: string;
-    };
+  disclaimer: {
+    non_medical: string;
   };
 }
 
@@ -120,18 +67,14 @@ const translations: Record<Language, I18nData> = {
         unit: "/100"
       },
       badges: {
-        label: "Signals detected"
-      },
-      badge: {
+        label: "Signals detected",
         speech: "Speech present",
         music: "Music or TV",
         fluctuating: "Unsteady sounds",
         steady: "Steady signal"
       },
       tips: {
-        title: "Try this"
-      },
-      tip: {
+        title: "Try this",
         lower_volume: "Lower TV or music volume.",
         single_sound: "Use one steady sound (e.g. fan or white noise).",
         soft_light: "Soften the room light.",
@@ -152,57 +95,8 @@ const translations: Record<Language, I18nData> = {
       },
       footer_privacy: "On-device only. No audio is uploaded. [Privacy Policy]"
     },
-    meal: {
-      title: "Meal Tracker",
-      subtitle: "Log your baby's feeding moments",
-      sections: {
-        howWasMeal: "How was the meal?",
-        whatWouldYouLike: "What would you like to do?",
-        quickActions: "Quick actions"
-      },
-      buttons: {
-        snapMeal: "Snap a meal photo",
-        askQuestion: "Ask a question",
-        logMeal: "Log a meal",
-        viewPatterns: "View feeding patterns",
-        gallery: "View gallery",
-        settings: "Settings",
-        takePhoto: "Take photo",
-        uploadPhoto: "Upload photo",
-        saveMeal: "Save meal",
-        cancel: "Cancel",
-        back: "Back"
-      },
-      descriptions: {
-        selectRating: "Select a rating for the meal",
-        takePhotoOfMeal: "Take a photo of the meal to remember it better",
-        getInsightsAboutFeeding: "Get insights about feeding patterns"
-      },
-      privacy: {
-        photosStayPrivate: "Photos stay private on your device",
-        dataStaysLocal: "Data stays local on your device"
-      },
-      form: {
-        mealType: "Meal type",
-        foodItems: "Food items",
-        rating: "Rating",
-        notes: "Notes"
-      },
-      insights: {
-        title: "Meal Insights",
-        moodScore: "Mood score",
-        imageAnalysis: "Image analysis",
-        personalizedTip: "Personalized tip",
-        mealAchievement: "Meal achievement"
-      },
-      question: {
-        title: "Ask AI",
-        placeholder: "What's on your mind?",
-        suggestions: "Suggestions",
-        askAI: "Ask AI",
-        aiResponse: "AI response",
-        askAnother: "Ask another"
-      }
+    disclaimer: {
+      non_medical: "Silli offers guidance, not clinical advice."
     }
   },
   pt_br: {
@@ -219,18 +113,14 @@ const translations: Record<Language, I18nData> = {
         unit: "/100"
       },
       badges: {
-        label: "Sinais detectados"
-      },
-      badge: {
+        label: "Sinais detectados",
         speech: "Voz ativa",
         music: "Música ou TV",
         fluctuating: "Sons instáveis",
         steady: "Som contínuo"
       },
       tips: {
-        title: "Tente isto"
-      },
-      tip: {
+        title: "Tente isto",
         lower_volume: "Abaixe o volume da TV ou música.",
         single_sound: "Use um som contínuo (como ventilador ou ruído branco).",
         soft_light: "Diminua a luz do ambiente.",
@@ -251,57 +141,8 @@ const translations: Record<Language, I18nData> = {
       },
       footer_privacy: "Análise local. Nenhum áudio é enviado. [Política de Privacidade]"
     },
-    meal: {
-      title: "Registro de Refeição",
-      subtitle: "Registre os momentos de alimentação do seu bebê",
-      sections: {
-        howWasMeal: "Como foi a refeição?",
-        whatWouldYouLike: "O que você gostaria de fazer?",
-        quickActions: "Ações rápidas"
-      },
-      buttons: {
-        snapMeal: "Fotografe uma foto da refeição",
-        askQuestion: "Faça uma pergunta",
-        logMeal: "Registre uma refeição",
-        viewPatterns: "Veja padrões de alimentação",
-        gallery: "Veja galeria",
-        settings: "Configurações",
-        takePhoto: "Tirar foto",
-        uploadPhoto: "Enviar foto",
-        saveMeal: "Salvar refeição",
-        cancel: "Cancelar",
-        back: "Voltar"
-      },
-      descriptions: {
-        selectRating: "Selecione uma avaliação para a refeição",
-        takePhotoOfMeal: "Fotografe uma foto da refeição para lembrar melhor",
-        getInsightsAboutFeeding: "Obtenha insights sobre padrões de alimentação"
-      },
-      privacy: {
-        photosStayPrivate: "Fotos ficam privadas no seu dispositivo",
-        dataStaysLocal: "Dados ficam locais no seu dispositivo"
-      },
-      form: {
-        mealType: "Tipo de refeição",
-        foodItems: "Itens alimentares",
-        rating: "Avaliação",
-        notes: "Notas"
-      },
-      insights: {
-        title: "Insights de Refeição",
-        moodScore: "Pontuação de humor",
-        imageAnalysis: "Análise de imagem",
-        personalizedTip: "Dica personalizada",
-        mealAchievement: "Conquista de refeição"
-      },
-      question: {
-        title: "Perguntar ao AI",
-        placeholder: "O que está na sua cabeça?",
-        suggestions: "Sugestões",
-        askAI: "Perguntar ao AI",
-        aiResponse: "Resposta do AI",
-        askAnother: "Perguntar outra"
-      }
+    disclaimer: {
+      non_medical: "A Silli oferece orientação, não aconselhamento clínico."
     }
   }
 };
