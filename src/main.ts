@@ -1,52 +1,47 @@
 /**
- * Main app - wires UI + modes + deep-link params
+ * Main app - wires UI + modes + deep-link params with dyad routing
  */
 
-
-import { FeatureExtractor } from './dsp/features.js';
-import { Scorer } from './dsp/scoring.js';
-import { AudioProcessor } from './audio/worklet-node.js';
-import { SessionExporter } from './util/export.js';
-import { ShareCard } from './ui/share-card.js';
+import { Router } from './ui/router.js';
+import { TantrumHomeScreen } from './ui/screens/tantrum/home.js';
+import { TantrumCaptureScreen } from './ui/screens/tantrum/capture.js';
+import { TantrumThermoScreen } from './ui/screens/tantrum/thermo.js';
+import { TantrumHistoryScreen } from './ui/screens/tantrum/history.js';
+import { TantrumSettingsScreen } from './ui/screens/tantrum/settings.js';
+import { MealHomeScreen } from './ui/screens/meal/home.js';
+import { MealLoggingScreen } from './ui/screens/meal/meal-logging.js';
+import { MealInsightsScreen } from './ui/screens/meal/insights.js';
+import { MealGalleryScreen } from './ui/screens/meal/gallery.js';
+import { MealSettingsScreen } from './ui/screens/meal/settings.js';
+import { createTantrumForm } from './ui/forms/tantrum.js';
+import { localStore } from './util/local_store.js';
 import './style.css';
-
-const RELAY_INGEST_URL = 'https://silli-auto-ingest-relay.silli-tg-bot.workers.dev/ingest';
 
 interface AppConfig {
   mode: 'helper' | 'low_power';
   family: string;
   session: string;
   token: string | null;
+  dyad: 'night' | 'tantrum' | 'meal';
 }
 
 class SilliApp {
   private config: AppConfig;
-  private audioProcessor: AudioProcessor | null = null;
-  private featureExtractor: FeatureExtractor;
-  private scorer: Scorer;
-  private sessionExporter: SessionExporter;
-  private shareCard: ShareCard;
-  
-  private isRunning = false;
-  private startTime: number = 0;
-  private sessionData: any[] = [];
-  private currentScore = 0;
-  private currentBadges: string[] = [];
-  private currentTips: string[] = [];
-  private lastTipTime = 0;
+  private router: Router;
+  private container: HTMLElement;
+  private currentScreen: any = null;
+  private tantrumForm: any = null;
 
   constructor() {
     this.config = this.parseUrlParams();
-    console.log('Token after parsing:', this.config.token ? 'FOUND' : 'NOT_FOUND');
+    console.log('App config:', this.config);
     this.stripTokenFromUrl();
-    console.log('Token after stripping:', this.config.token ? 'FOUND' : 'NOT_FOUND');
-    this.featureExtractor = new FeatureExtractor();
-    this.scorer = new Scorer();
-    this.sessionExporter = new SessionExporter();
-    this.shareCard = new ShareCard();
+    
+    this.container = document.getElementById('app')!;
+    this.router = new Router();
     
     this.initializeUI();
-    this.loadWeightsAndTips();
+    this.setupRoutes();
   }
 
   private parseUrlParams(): AppConfig {
@@ -55,347 +50,272 @@ class SilliApp {
       mode: (urlParams.get('mode') as 'helper' | 'low_power') || 'helper',
       family: urlParams.get('family') || 'fam_unknown',
       session: urlParams.get('session') || `fam_unknown_${Date.now()}`,
-      token: urlParams.get('tok') || null
+      token: urlParams.get('tok') || null,
+      dyad: (urlParams.get('dyad') as 'night' | 'tantrum' | 'meal') || 'night'
     };
   }
 
-  private async loadWeightsAndTips(): Promise<void> {
-    await this.scorer.loadWeightsAndTips();
+  private initializeUI(): void {
+    // Set initial hash based on dyad
+    if (!window.location.hash) {
+      // Route to the appropriate dyad home screen
+      if (this.config.dyad === 'tantrum') {
+        window.location.hash = '#tantrum/home';
+      } else if (this.config.dyad === 'meal') {
+        window.location.hash = '#meal/home';
+      } else {
+        // Default to night helper
+        window.location.hash = '#night/home';
+      }
+    }
   }
 
-  private initializeUI(): void {
-    const app = document.getElementById('app')!;
+  private setupRoutes(): void {
+    // Tantrum routes
+    this.router.register({ dyad: 'tantrum', screen: 'home' }, () => {
+      this.renderScreen(new TantrumHomeScreen(this.container, this.router));
+    });
+
+    this.router.register({ dyad: 'tantrum', screen: 'capture' }, () => {
+      const route = this.router.getCurrentRoute();
+      const intensity = route?.params?.intensity || '5';
+      this.renderScreen(new TantrumCaptureScreen(this.container, this.router, intensity));
+    });
+
+    this.router.register({ dyad: 'tantrum', screen: 'thermo' }, () => {
+      const route = this.router.getCurrentRoute();
+      const intensity = route?.params?.intensity || '5';
+      const hasAudio = route?.params?.hasAudio || 'false';
+      const hasVideo = route?.params?.hasVideo || 'false';
+      this.renderScreen(new TantrumThermoScreen(this.container, this.router, intensity, hasAudio, hasVideo));
+    });
+
+    this.router.register({ dyad: 'tantrum', screen: 'history' }, () => {
+      this.renderScreen(new TantrumHistoryScreen(this.container, this.router));
+    });
+
+    this.router.register({ dyad: 'tantrum', screen: 'settings' }, () => {
+      this.renderScreen(new TantrumSettingsScreen(this.container, this.router));
+    });
+
+    // New enhanced tantrum form route
+    this.router.register({ dyad: 'tantrum', screen: 'form' }, () => {
+      this.renderTantrumForm();
+    });
+
+    // Meal routes
+    this.router.register({ dyad: 'meal', screen: 'home' }, () => {
+      this.renderScreen(new MealHomeScreen(this.container, this.router));
+    });
+
+    this.router.register({ dyad: 'meal', screen: 'meal-logging' }, () => {
+      const route = this.router.getCurrentRoute();
+      const action = route?.params?.action || '';
+      const rating = route?.params?.rating || '0';
+      this.renderScreen(new MealLoggingScreen(this.container, this.router, action, rating));
+    });
+
+    this.router.register({ dyad: 'meal', screen: 'insights' }, () => {
+      const route = this.router.getCurrentRoute();
+      const rating = route?.params?.rating || '0';
+      const hasImage = route?.params?.hasImage || 'false';
+      const dietaryDiversity = route?.params?.dietaryDiversity || '0.5';
+      const clutterScore = route?.params?.clutterScore || '0.5';
+      const plateCoverage = route?.params?.plateCoverage || '0.5';
+      this.renderScreen(new MealInsightsScreen(this.container, this.router, rating, hasImage, dietaryDiversity, clutterScore, plateCoverage));
+    });
+
+    this.router.register({ dyad: 'meal', screen: 'gallery' }, () => {
+      this.renderScreen(new MealGalleryScreen(this.container, this.router));
+    });
+
+    this.router.register({ dyad: 'meal', screen: 'settings' }, () => {
+      this.renderScreen(new MealSettingsScreen(this.container, this.router));
+    });
+
+    // Night routes (fallback to original functionality)
+    this.router.register({ dyad: 'night', screen: 'home' }, () => {
+      this.renderNightScreen();
+    });
+  }
+
+  private renderTantrumForm(): void {
+    // Clean up previous screen
+    if (this.currentScreen && this.currentScreen.destroy) {
+      this.currentScreen.destroy();
+    }
+
+    this.container.innerHTML = `
+      <div class="screen tantrum-form">
+        <header class="screen-header">
+          <button class="back-btn" data-action="back">← Back</button>
+          <h1>😤 Tantrum Tracker</h1>
+        </header>
+
+        <main class="screen-content">
+          <div id="tantrum-form-container"></div>
+        </main>
+
+        <nav class="screen-nav">
+          <button class="btn secondary" data-action="cancel">Cancel</button>
+          <button class="btn primary" data-action="save">Save Session</button>
+        </nav>
+      </div>
+    `;
+
+    // Mount the enhanced tantrum form
+    const formContainer = this.container.querySelector('#tantrum-form-container') as HTMLElement;
+    this.tantrumForm = createTantrumForm();
+    this.tantrumForm.mount(formContainer);
+
+    // Bind events
+    this.bindTantrumFormEvents();
+  }
+
+  private bindTantrumFormEvents(): void {
+    // Back button
+    const backBtn = this.container.querySelector('.back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        this.router.navigate({ dyad: 'tantrum', screen: 'home' });
+      });
+    }
+
+    // Cancel button
+    const cancelBtn = this.container.querySelector('[data-action="cancel"]');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        this.router.navigate({ dyad: 'tantrum', screen: 'home' });
+      });
+    }
+
+    // Save button
+    const saveBtn = this.container.querySelector('[data-action="save"]');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        await this.saveTantrumSession();
+      });
+    }
+  }
+
+  private async saveTantrumSession(): Promise<void> {
+    if (!this.tantrumForm) return;
+
+    const validation = this.tantrumForm.validate();
+    if (!validation.ok) {
+      alert(validation.message);
+      return;
+    }
+
+    const context = this.tantrumForm.getContext();
     
-    app.innerHTML = `
+    // Create session data
+    const session: any = {
+      id: `tantrum_${Date.now()}`,
+      ts: new Date().toISOString(),
+      family_id: this.config.family,
+      session_id: this.config.session,
+      ...context
+    };
+
+    try {
+      // Save to local storage
+      await localStore.saveSession(session);
+      
+      // Show success message
+      alert('Session saved successfully!');
+      
+      // Reset form and navigate back
+      this.tantrumForm.reset();
+      this.router.navigate({ dyad: 'tantrum', screen: 'home' });
+    } catch (error) {
+      console.error('Error saving session:', error);
+      alert('Error saving session. Please try again.');
+    }
+  }
+
+  private renderScreen(screen: any): void {
+    // Clean up previous screen
+    if (this.currentScreen && this.currentScreen.destroy) {
+      this.currentScreen.destroy();
+    }
+
+    this.currentScreen = screen;
+    screen.render();
+  }
+
+  private renderNightScreen(): void {
+    // Fallback to original night helper functionality
+    const dyadName = 'Night Helper';
+    
+    this.container.innerHTML = `
       <div class="container">
         <header>
-          <h1>Silli Parent Night Helper</h1>
+          <h1>Silli ${dyadName}</h1>
           <p class="mode">${this.config.mode === 'helper' ? 'Helper Mode' : 'Low-Power Mode'}</p>
         </header>
         
         <main>
           <div class="score-display">
             <div class="score-ring">
-              <svg viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#e5e7eb" stroke-width="8"/>
-                <circle id="score-circle" cx="60" cy="60" r="50" fill="none" stroke="#6366f1" stroke-width="8" 
-                        stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
+              <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#2d2d2d" stroke-width="8"/>
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#6366f1" stroke-width="8" 
+                        stroke-dasharray="283" stroke-dashoffset="283" 
+                        transform="rotate(-90 50 50)" id="score-circle"/>
               </svg>
               <div class="score-text">
                 <span id="score-value">0</span>
-                <span class="score-label">/100</span>
+                <div class="score-label">Score</div>
               </div>
             </div>
           </div>
-          
+
           <div class="badges">
+            <h3>Badges</h3>
             <div id="badges-container"></div>
           </div>
-          
+
           <div class="tips">
             <h3>Tips</h3>
             <div id="tips-container"></div>
           </div>
-          
+
           <div class="controls">
             <button id="start-btn" class="btn primary">Start Session</button>
             <button id="stop-btn" class="btn secondary" disabled>Stop Session</button>
-            <button id="export-btn" class="btn secondary" disabled>Process Results</button>
+            <button id="export-btn" class="btn secondary" disabled>Export Results</button>
           </div>
-          
+
           <div class="session-info">
+            <p>Family: ${this.config.family}</p>
             <p>Session: ${this.config.session}</p>
-            <p>Duration: <span id="duration">00:00</span></p>
+            <p id="timer">Duration: 00:00</p>
           </div>
         </main>
-        
+
         <footer>
-          <p class="privacy">Privacy: All analysis runs locally. No audio is uploaded.</p>
+          <div class="privacy">
+            <p>🔒 All processing happens on your device. Audio stays private.</p>
+          </div>
         </footer>
       </div>
     `;
 
-    this.bindEvents();
-  }
-
-  private bindEvents(): void {
-    const startBtn = document.getElementById('start-btn')!;
-    const stopBtn = document.getElementById('stop-btn')!;
-    const exportBtn = document.getElementById('export-btn')!;
-
-    startBtn.addEventListener('click', () => this.startSession());
-    stopBtn.addEventListener('click', () => this.stopSession());
-    exportBtn.addEventListener('click', () => this.exportResults());
-  }
-
-  private async startSession(): Promise<void> {
-    try {
-      this.audioProcessor = new AudioProcessor();
-      await this.audioProcessor.initialize();
-      
-      this.isRunning = true;
-      this.startTime = Date.now();
-      this.sessionData = [];
-      
-      this.audioProcessor.start((audioData: Float32Array) => {
-        this.processAudioFrame(audioData);
-      });
-      
-      // Update UI
-      (document.getElementById('start-btn') as HTMLButtonElement)!.disabled = true;
-      (document.getElementById('stop-btn') as HTMLButtonElement)!.disabled = false;
-      
-      // Start timer
-      this.updateTimer();
-      
-      // Request wake lock in helper mode
-      if (this.config.mode === 'helper') {
-        this.requestWakeLock();
-      }
-      
-    } catch (error) {
-      console.error('Failed to start session:', error);
-      
-      // Provide more specific error messages
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          alert('Microphone access denied. Please allow microphone permissions and try again.');
-        } else if (error.name === 'NotFoundError') {
-          alert('No microphone found. Please connect a microphone and try again.');
-        } else {
-          alert(`Audio initialization failed: ${error.message}. Please check microphone permissions and try again.`);
-        }
-      } else {
-        alert('Could not start audio analysis. Please check microphone permissions and try again.');
-      }
-    }
-  }
-
-  private stopSession(): void {
-    this.isRunning = false;
-    this.audioProcessor?.stop();
-    
-    // Update UI
-    (document.getElementById('start-btn') as HTMLButtonElement)!.disabled = false;
-    (document.getElementById('stop-btn') as HTMLButtonElement)!.disabled = true;
-    (document.getElementById('export-btn') as HTMLButtonElement)!.disabled = false;
-  }
-
-  private processAudioFrame(audioData: Float32Array): void {
-    if (!this.isRunning) return;
-    
-    // Extract features
-    const frameFeatures = this.featureExtractor.processFrame(audioData);
-    
-    // Store frame data
-    this.sessionData.push({
-      timestamp: Date.now() - this.startTime,
-      features: frameFeatures
-    });
-    
-    // Aggregate features every 10 seconds
-    if (this.sessionData.length % 160 === 0) { // ~10 seconds at 16fps
-      this.aggregateAndScore();
-    }
-  }
-
-  private aggregateAndScore(): void {
-    const recentFrames = this.sessionData.slice(-160); // Last 10 seconds
-    const frameFeatures = recentFrames.map(d => d.features);
-    
-    // Aggregate features
-    const aggregatedFeatures = this.featureExtractor.aggregateFeatures(frameFeatures);
-    
-    // Calculate score
-    const result = this.scorer.calculateScore(aggregatedFeatures);
-    
-    // Update current state
-    this.currentScore = result.score;
-    this.currentBadges = result.badges;
-    this.currentTips = result.tips;
-    
-    // Update UI
-    this.updateScoreDisplay();
-    this.updateBadges();
-    
-    // Show tip if enough time has passed
-    const now = Date.now();
-    if (now - this.lastTipTime > 60000) { // 1 minute
-      this.showTip();
-      this.lastTipTime = now;
-    }
-  }
-
-  private updateScoreDisplay(): void {
-    const scoreElement = document.getElementById('score-value')!;
-    const circleElement = document.getElementById('score-circle')!;
-    
-    scoreElement.textContent = this.currentScore.toString();
-    
-    // Update progress ring
-    const circumference = 2 * Math.PI * 50;
-    const progress = this.currentScore / 100;
-    const offset = circumference - (progress * circumference);
-    circleElement.style.strokeDashoffset = offset.toString();
-  }
-
-  private updateBadges(): void {
-    const container = document.getElementById('badges-container')!;
-    container.innerHTML = this.currentBadges.map(badge => 
-      `<span class="badge">${badge}</span>`
-    ).join('');
-  }
-
-  private showTip(): void {
-    const container = document.getElementById('tips-container')!;
-    const tip = this.currentTips[Math.floor(Math.random() * this.currentTips.length)];
-    
-    container.innerHTML = `<p class="tip">${tip}</p>`;
-  }
-
-  private updateTimer(): void {
-    if (!this.isRunning) return;
-    
-    const duration = Date.now() - this.startTime;
-    const minutes = Math.floor(duration / 60000);
-    const seconds = Math.floor((duration % 60000) / 1000);
-    
-    document.getElementById('duration')!.textContent = 
-      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
-    requestAnimationFrame(() => this.updateTimer());
-  }
-
-  private async requestWakeLock(): Promise<void> {
-    try {
-      if ('wakeLock' in navigator) {
-        await navigator.wakeLock.request('screen');
-        console.log('Wake lock acquired');
-      }
-    } catch (error) {
-      console.warn('Could not acquire wake lock:', error);
-    }
-  }
-
-  private async exportResults(): Promise<void> {
-    const sessionJson = this.sessionExporter.exportSession({
-      config: this.config,
-      sessionData: this.sessionData,
-      startTime: this.startTime,
-      currentScore: this.currentScore,
-      currentBadges: this.currentBadges
-    });
-    
-    // Create PNG card
-    const pngBlob = await this.shareCard.generateCard({
-      score: this.currentScore,
-      badges: this.currentBadges,
-      duration: Date.now() - this.startTime
-    });
-    
-    // Send data to relay
-    await this.sendToRelay(sessionJson, pngBlob);
-  }
-
-  private async sendToRelay(sessionJson: string, pngBlob: Blob): Promise<void> {
-    const exportBtn = document.getElementById('export-btn') as HTMLButtonElement;
-    try {
-      exportBtn.textContent = 'Sending to Silli...';
-      exportBtn.disabled = true;
-
-      const token = this.config.token;
-      if (!token) {
-        console.warn('No session token found in URL params (tok=...)');
-        this.fallbackDownload(sessionJson, pngBlob, 'Missing session token. Files downloaded instead.');
-        return;
-      }
-
-      console.log('Sending to relay with token:', token ? 'PRESENT' : 'MISSING');
-      console.log('Relay URL:', RELAY_INGEST_URL);
-      console.log('Session JSON length:', sessionJson.length);
-      
-      const resp = await fetch(RELAY_INGEST_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: sessionJson
-      });
-
-      console.log('Relay response status:', resp.status);
-      
-      if (!resp.ok) {
-        const txt = await resp.text().catch(() => '');
-        console.error('Relay error response:', txt);
-        throw new Error(`Relay error: ${resp.status} ${txt}`);
-      }
-      
-      const responseText = await resp.text();
-      console.log('Relay success response:', responseText);
-
-      // Success UI
-      const success = document.createElement('div');
-      success.innerHTML = `
-        <div style="background: #f0fdf4; border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <h4>✅ Session Sent to Silli</h4>
-          <p>Your session report was delivered securely.</p>
-          <p><strong>Session ID:</strong> ${this.config.session}</p>
-          <p>You’ll see a confirmation in your Telegram chat.</p>
-        </div>
-      `;
-      document.querySelector('.container')?.appendChild(success);
-
-      exportBtn.textContent = 'Sent ✅';
-    } catch (error) {
-      console.error('Failed to send to relay:', error);
-      this.fallbackDownload(sessionJson, pngBlob, 'Auto-send failed (offline or network issue). Files downloaded instead.');
-      exportBtn.textContent = 'Downloaded';
-    } finally {
-      setTimeout(() => {
-        exportBtn.textContent = 'Process Results';
-        exportBtn.disabled = false;
-      }, 3000);
-    }
-  }
-
-
-
-
-  private downloadFile(content: any, filename: string, mimeType: string): void {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  private fallbackDownload(sessionJson: string, pngBlob: Blob, reason: string): void {
-    this.downloadFile(sessionJson, 'session.json', 'application/json');
-    this.downloadFile(pngBlob, 'session-card.png', 'image/png');
-
-    const fallback = document.createElement('div');
-    fallback.innerHTML = `
-      <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin: 16px 0;">
-        <h4>⚠️ Auto-send Unavailable</h4>
-        <p>${reason}</p>
-        <p><strong>Session ID:</strong> ${this.config.session}</p>
-        <p>You can upload the session.json to the bot with /ingest as a fallback.</p>
-      </div>
-    `;
-    document.querySelector('.container')?.appendChild(fallback);
+    // Add basic night helper functionality here if needed
+    console.log('Night helper screen rendered');
   }
 
   private stripTokenFromUrl(): void {
-    const u = new URL(window.location.href);
-    if (u.searchParams.has('tok')) {
-      u.searchParams.delete('tok');
-      history.replaceState(null, '', u.toString());
+    if (this.config.token) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('tok');
+      window.history.replaceState({}, '', url.toString());
     }
   }
 }
 
-// Initialize app
-new SilliApp();
+// Initialize the app
+document.addEventListener('DOMContentLoaded', () => {
+  new SilliApp();
+});

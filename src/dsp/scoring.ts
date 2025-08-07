@@ -1,156 +1,190 @@
 /**
- * Scoring module - reads weights/tips JSON and computes scores
+ * Unified scoring and tip selection for all dyads
  */
 
-import type { AudioFeatures } from './features.js';
-
-export interface ScoringWeights {
-  w1_vad: number;
-  w2_flux: number;
-  w3_centroid: number;
-  w4_level: number;
-  w5_steady_bonus: number;
+export interface TipData {
+  tips: Record<string, Record<string, string[]>>;
+  badges: Record<string, any>;
+  [key: string]: any;
 }
 
-export interface Tips {
-  quiet: string[];
-  speech: string[];
-  tv_music: string[];
-  white_noise: string[];
-}
+export class DyadScoring {
+  private static tipCache: Map<string, TipData> = new Map();
 
-export interface ScoreResult {
-  score: number;
-  badges: string[];
-  tips: string[];
-}
+  /**
+   * Load tips data for a specific dyad
+   */
+  public static async loadTips(dyad: 'night' | 'tantrum' | 'meal'): Promise<TipData> {
+    if (this.tipCache.has(dyad)) {
+      return this.tipCache.get(dyad)!;
+    }
 
-export class Scorer {
-  private weights: ScoringWeights;
-  private tips: Tips;
-
-  constructor() {
-    // Default weights (same as bot)
-    this.weights = {
-      w1_vad: 35,
-      w2_flux: 20,
-      w3_centroid: 35,
-      w4_level: 35,
-      w5_steady_bonus: 10
-    };
-    
-    // Default tips
-    this.tips = {
-      quiet: [
-        "Quiet minute + 4-7-8 breathing; speak softer than a whisper.",
-        "Dim lights to warm (~1800K); hide bright screens.",
-        "Lullaby pacing ~60–70 BPM; mirror child, then fade."
-      ],
-      speech: [
-        "Lower your voice gradually; use gentle whispers.",
-        "Create a calm environment; reduce background noise.",
-        "Use soothing tones; avoid sudden volume changes."
-      ],
-      tv_music: [
-        "Turn down media volume; use subtitles if needed.",
-        "Switch to calming sounds; avoid stimulating content.",
-        "Create a quiet zone; minimize electronic distractions."
-      ],
-      white_noise: [
-        "White noise is good for sleep; keep it consistent.",
-        "Use gentle, steady sounds; avoid sudden changes.",
-        "Maintain a peaceful environment; reduce interruptions."
-      ]
-    };
+    try {
+      const response = await fetch(`/scoring/${dyad}/tips.json`);
+      const tipsData = await response.json();
+      this.tipCache.set(dyad, tipsData);
+      return tipsData;
+    } catch (error) {
+      console.error(`Failed to load tips for ${dyad}:`, error);
+      return { tips: {}, badges: {} };
+    }
   }
 
-  async loadWeightsAndTips(): Promise<void> {
-    try {
-      // Load weights
-      const weightsResponse = await fetch('/scoring/weights.json');
-      if (weightsResponse.ok) {
-        this.weights = await weightsResponse.json();
+  /**
+   * Select a tip based on dyad context and metrics
+   */
+  public static selectTip(
+    dyad: 'night' | 'tantrum' | 'meal',
+    context: any,
+    metrics: any
+  ): { tip: string; badge?: string } {
+    const tipsData = this.tipCache.get(dyad);
+    if (!tipsData) {
+      return { tip: 'Great session! Keep up the good work.' };
+    }
+
+    let tipCategory = 'general';
+    let tipLevel = 'medium';
+
+    // Dyad-specific tip selection logic
+    switch (dyad) {
+      case 'tantrum':
+        tipCategory = this.selectTantrumTipCategory(context, metrics);
+        tipLevel = this.selectTantrumTipLevel(metrics.escalation_index);
+        break;
+      
+      case 'meal':
+        tipCategory = this.selectMealTipCategory(context, metrics);
+        tipLevel = this.selectMealTipLevel(metrics.meal_mood);
+        break;
+      
+      case 'night':
+        tipCategory = this.selectNightTipCategory(context, metrics);
+        tipLevel = this.selectNightTipLevel(metrics.score?.short);
+        break;
+    }
+
+    // Get tip from category and level
+    const tips = tipsData.tips[tipCategory]?.[tipLevel] || 
+                 tipsData.tips.general?.[tipLevel] || 
+                 ['Great session! Keep up the good work.'];
+
+    const tip = tips[Math.floor(Math.random() * tips.length)];
+
+    // Check for badges
+    const badge = this.checkForBadge(dyad, context, metrics, tipsData);
+
+    return { tip, badge };
+  }
+
+  private static selectTantrumTipCategory(context: any, _metrics: any): string {
+    const trigger = context.trigger || 'unknown';
+    return trigger;
+  }
+
+  private static selectTantrumTipLevel(escalationIndex: number): string {
+    if (escalationIndex < 0.33) return 'low';
+    if (escalationIndex < 0.66) return 'medium';
+    return 'high';
+  }
+
+  private static selectMealTipCategory(_context: any, metrics: any): string {
+    // Check for specific issues first
+    if (metrics.dietary_diversity < 0.3) return 'diversity';
+    if (metrics.clutter_score > 0.7) return 'clutter';
+    if (metrics.plate_coverage < 0.3 || metrics.plate_coverage > 0.8) return 'coverage';
+    return 'mood';
+  }
+
+  private static selectMealTipLevel(mealMood: number): string {
+    if (mealMood < 40) return 'low';
+    if (mealMood < 70) return 'medium';
+    return 'high';
+  }
+
+  private static selectNightTipCategory(_context: any, _metrics: any): string {
+    // Night helper uses existing logic
+    return 'general';
+  }
+
+  private static selectNightTipLevel(score: number): string {
+    if (score < 30) return 'low';
+    if (score < 70) return 'medium';
+    return 'high';
+  }
+
+  private static checkForBadge(
+    dyad: string,
+    context: any,
+    metrics: any,
+    tipsData: TipData
+  ): string | undefined {
+    const badges = tipsData.badges || {};
+    
+    for (const [_badgeKey, badge] of Object.entries(badges)) {
+      const badgeData = badge as any;
+      const triggers = badgeData.trigger || [];
+      
+      let shouldAward = false;
+      
+      switch (dyad) {
+        case 'tantrum':
+          shouldAward = this.checkTantrumBadge(triggers, context, metrics);
+          break;
+        case 'meal':
+          shouldAward = this.checkMealBadge(triggers, context, metrics);
+          break;
+        case 'night':
+          shouldAward = this.checkNightBadge(triggers, context, metrics);
+          break;
       }
       
-      // Load tips
-      const tipsResponse = await fetch('/scoring/tips.json');
-      if (tipsResponse.ok) {
-        this.tips = await tipsResponse.json();
+      if (shouldAward) {
+        return badgeData.name;
       }
-    } catch (error) {
-      console.warn('Could not load weights/tips, using defaults:', error);
     }
+    
+    return undefined;
   }
 
-  calculateScore(features: AudioFeatures): ScoreResult {
-    // Normalize level_dbfs to 0..1
-    const level_norm = Math.max(0, Math.min(1, (features.level_dbfs + 60) / 60));
-    
-    // Calculate base score
-    let score = 100.0;
-    score -= this.weights.w1_vad * features.vad_fraction;
-    score -= this.weights.w2_flux * features.flux_norm;
-    score -= this.weights.w3_centroid * features.centroid_norm;
-    score -= this.weights.w4_level * level_norm;
-    
-    // Steady bonus for quiet, steady sounds
-    const steady_bonus = (1.0 - features.flux_norm) * 
-      (features.level_dbfs >= -40.0 && features.level_dbfs <= -25.0 ? 1 : 0);
-    score += this.weights.w5_steady_bonus * steady_bonus;
-    
-    // White noise calibration bump
-    const is_steady_low = (features.flux_norm < 0.12 &&
-                          features.level_dbfs >= -40.0 && features.level_dbfs <= -25.0 &&
-                          features.centroid_norm < 0.45);
-    if (is_steady_low) {
-      score += 6; // small bump for steady broadband at safe level
-    }
-    
-    score = Math.max(0, Math.min(100, score));
-    
-    // Determine badges
-    const badges = this.determineBadges(features);
-    
-    // Select tips based on score
-    const tips = this.selectTips(score);
-    
-    return { score: Math.round(score), badges, tips };
+  private static checkTantrumBadge(triggers: string[], context: any, _metrics: any): boolean {
+    const coRegActions = context.co_regulation || [];
+    return triggers.some(trigger => coRegActions.includes(trigger));
   }
 
-  private determineBadges(features: AudioFeatures): string[] {
-    const badges: string[] = [];
-    
-    // Speech present
-    if (features.vad_fraction > 0.3) {
-      badges.push('Speech present');
-    }
-    
-    // Steady
-    if (features.stationarity > 0.7) {
-      badges.push('Steady');
-    }
-    
-    // Fluctuating
-    if (features.flux_norm > 0.5) {
-      badges.push('Fluctuating');
-    }
-    
-    return badges;
+  private static checkMealBadge(triggers: string[], _context: any, metrics: any): boolean {
+    return triggers.some(trigger => {
+      switch (trigger) {
+        case 'dietary_diversity':
+          return metrics.dietary_diversity > 0.7;
+        case 'plate_coverage':
+          return metrics.plate_coverage >= 0.4 && metrics.plate_coverage <= 0.7;
+        case 'meal_mood':
+          return metrics.meal_mood > 80;
+        default:
+          return false;
+      }
+    });
   }
 
-  private selectTips(score: number): string[] {
-    let category: keyof Tips;
-    
-    if (score >= 70) {
-      category = 'quiet';
-    } else if (score >= 50) {
-      category = 'speech';
-    } else if (score >= 30) {
-      category = 'tv_music';
-    } else {
-      category = 'white_noise';
-    }
-    
-    return this.tips[category] || this.tips.speech;
+  private static checkNightBadge(triggers: string[], context: any, metrics: any): boolean {
+    // Night helper badge logic
+    return triggers.some(trigger => {
+      switch (trigger) {
+        case 'good_score':
+          return metrics.score?.short > 70;
+        case 'consistent':
+          return context.consistency_score > 0.8;
+        default:
+          return false;
+      }
+    });
+  }
+
+  /**
+   * Clear tip cache (useful for testing or updates)
+   */
+  public static clearCache(): void {
+    this.tipCache.clear();
   }
 } 

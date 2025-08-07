@@ -1,0 +1,52 @@
+{
+  "tips": [
+    {
+      "id": "stay_calm",
+      "title": "Stay Calm and Present",
+      "description": "Your child needs your stability during emotional moments. Take deep breaths and maintain a steady presence.",
+      "badges": ["high_intensity", "escalation"]
+    },
+    {
+      "id": "name_feelings",
+      "title": "Name Their Feelings",
+      "description": "Use simple, calm words to help your child understand what they're experiencing.",
+      "badges": ["frustration", "transition"]
+    },
+    {
+      "id": "wait_for_calm",
+      "title": "Wait for the Storm to Pass",
+      "description": "Avoid problem-solving during peak intensity. Wait for calmer moments to address the situation.",
+      "badges": ["high_intensity", "limit_setting"]
+    },
+    {
+      "id": "offer_choices",
+      "title": "Offer Small Choices",
+      "description": "Give your child a sense of control with simple choices like 'shirt A or shirt B'.",
+      "badges": ["frustration", "transition"]
+    },
+    {
+      "id": "create_safe_space",
+      "title": "Create a Safe Space",
+      "description": "Ensure your child has a quiet, comfortable area where they can calm down.",
+      "badges": ["separation", "high_intensity"]
+    },
+    {
+      "id": "validate_emotions",
+      "title": "Validate Their Emotions",
+      "description": "Acknowledge that their feelings are real and important, even if the behavior needs guidance.",
+      "badges": ["frustration", "limit_setting"]
+    },
+    {
+      "id": "use_gentle_touch",
+      "title": "Use Gentle Touch",
+      "description": "If your child accepts it, gentle touch like holding hands can provide comfort and connection.",
+      "badges": ["separation", "transition"]
+    },
+    {
+      "id": "maintain_routine",
+      "title": "Maintain Predictable Routines",
+      "description": "Consistent daily patterns help children feel secure and reduce anxiety around transitions.",
+      "badges": ["transition", "frustration"]
+    }
+  ]
+} 

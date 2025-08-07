@@ -1,0 +1,34 @@
+{
+  "tips": [
+    {
+      "id": "quiet_environment",
+      "title": "Create a Quiet Environment",
+      "description": "Reduce background noise by closing windows, turning off TVs, and asking others to speak quietly.",
+      "badges": ["background_noise", "loud_environment"]
+    },
+    {
+      "id": "consistent_volume",
+      "title": "Maintain Consistent Volume",
+      "description": "Try to keep your voice at a steady volume level throughout the session.",
+      "badges": ["fluctuating", "volume_changes"]
+    },
+    {
+      "id": "clear_speech",
+      "title": "Speak Clearly",
+      "description": "Enunciate your words clearly and take your time when speaking.",
+      "badges": ["mumbled_speech", "unclear_audio"]
+    },
+    {
+      "id": "steady_rhythm",
+      "title": "Maintain Steady Rhythm",
+      "description": "Try to keep a consistent pace and rhythm in your speech.",
+      "badges": ["irregular_pacing", "rhythm_changes"]
+    },
+    {
+      "id": "relaxed_voice",
+      "title": "Keep Your Voice Relaxed",
+      "description": "Avoid tension in your voice and maintain a calm, relaxed tone.",
+      "badges": ["tense_voice", "strained_speech"]
+    }
+  ]
+} 

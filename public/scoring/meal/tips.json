@@ -1,0 +1,64 @@
+{
+  "tips": [
+    {
+      "id": "shrink_portions",
+      "title": "Shrink Portions",
+      "description": "Offer smaller portions to reduce overwhelm. Your child can always ask for more.",
+      "badges": ["low_intake", "refusal"]
+    },
+    {
+      "id": "praise_tasting",
+      "title": "Praise Any Tasting",
+      "description": "Celebrate even small bites or tastes. Positive reinforcement builds confidence.",
+      "badges": ["low_intake", "picky_eating"]
+    },
+    {
+      "id": "uncluttered_table",
+      "title": "Keep Table Uncluttered",
+      "description": "Remove distractions and keep the eating area simple and focused.",
+      "badges": ["visual_overload", "distraction"]
+    },
+    {
+      "id": "offer_choices",
+      "title": "Offer Food Choices",
+      "description": "Give your child some control by offering 2-3 healthy options.",
+      "badges": ["refusal", "picky_eating"]
+    },
+    {
+      "id": "eat_together",
+      "title": "Eat Together",
+      "description": "Model healthy eating habits by sharing meals as a family when possible.",
+      "badges": ["low_intake", "social_eating"]
+    },
+    {
+      "id": "gentle_pressure",
+      "title": "Use Gentle Pressure",
+      "description": "Encourage without forcing. 'Would you like to try a small bite?'",
+      "badges": ["refusal", "picky_eating"]
+    },
+    {
+      "id": "create_routine",
+      "title": "Create Meal Routines",
+      "description": "Establish consistent meal times and pre-meal rituals to build predictability.",
+      "badges": ["irregular_eating", "transition"]
+    },
+    {
+      "id": "celebrate_progress",
+      "title": "Celebrate Progress",
+      "description": "Focus on improvements, no matter how small. Every step forward counts.",
+      "badges": ["low_intake", "picky_eating"]
+    },
+    {
+      "id": "reduce_stress",
+      "title": "Reduce Mealtime Stress",
+      "description": "Keep the atmosphere calm and positive. Avoid power struggles over food.",
+      "badges": ["high_stress", "conflict"]
+    },
+    {
+      "id": "involve_child",
+      "title": "Involve Your Child",
+      "description": "Let them help with meal prep, setting the table, or choosing ingredients.",
+      "badges": ["low_engagement", "picky_eating"]
+    }
+  ]
+} 
